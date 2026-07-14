@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Betsson — Spin Wheel Journey Prototype</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ===== RESET ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Open Sans', sans-serif; background: #e0e0e0; min-height: 100vh; }
+    button { font-family: 'Open Sans', sans-serif; cursor: pointer; }
+    img { display: block; max-width: 100%; }
+    a { text-decoration: none; color: inherit; }
+
+    /* ===== DESIGN TOKENS ===== */
+    :root {
+      --orange: #ff6600;
+      --orange-hover: #e55d00;
+      --orange-light: #fff0e7;
+      --green: #40b840;
+      --green-hover: #369836;
+      --dark: #2e2f3c;
+      --bg: #f7f7f7;
+      --surface: #ffffff;
+      --text: rgba(0,0,0,0.87);
+      --text-secondary: rgba(0,0,0,0.6);
+      --border: rgba(0,0,0,0.12);
+    }
+
+    /* ===== PAGES ===== */
+    .page { display: none; min-height: 100vh; background: var(--bg); }
+    .page.active { display: block; }
+
+    /* ===== HEADER ===== */
+    .header {
+      background: var(--orange);
+      position: sticky; top: 0; z-index: 200;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    .header-top {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      padding: 10px 24px;
+      max-width: 1940px; margin: 0 auto;
+    }
+    .header-logo img { height: 20px; }
+    .header-actions { display: flex; align-items: center; gap: 8px; }
+    .header-help {
+      width: 36px; height: 36px; border-radius: 50%;
+      border: 1.5px solid rgba(255,255,255,0.5);
+      display: flex; align-items: center; justify-content: center;
+      color: white; font-size: 14px; cursor: pointer;
+    }
+    .btn-login {
+      border: 1.5px solid white; color: white; background: transparent;
+      padding: 6px 20px; border-radius: 4px;
+      font-size: 14px; font-weight: 600; height: 36px;
+      transition: background 0.2s;
+    }
+    .btn-login:hover { background: rgba(255,255,255,0.12); }
+    .btn-create {
+      background: var(--green); color: rgba(255,255,255,0.9);
+      border: none; padding: 6px 20px; border-radius: 4px;
+      font-size: 14px; font-weight: 600; height: 36px;
+      transition: background 0.2s;
+    }
+    .btn-create:hover { background: var(--green-hover); }
+    .header-nav {
+      display: flex; align-items: center;
+      overflow-x: auto; scrollbar-width: none;
+      padding: 0 24px;
+      max-width: 1940px; margin: 0 auto;
+    }
+    .header-nav::-webkit-scrollbar { display: none; }
+    .header-nav a {
+      color: white; font-size: 14px; font-weight: 600;
+      padding: 10px 12px; white-space: nowrap; display: block;
+      opacity: 0.85; transition: opacity 0.15s;
+    }
+    .header-nav a:hover { opacity: 1; }
+    .header-nav a.active { opacity: 1; border-bottom: 2px solid white; }
+
+    /* ===== HERO BANNER ===== */
+    .hero {
+      background: #111; position: relative; overflow: hidden;
+      height: 450px; display: flex; align-items: center;
+    }
+    .hero-bg { position: absolute; inset: 0; }
+    .hero-bg img { width: 100%; height: 100%; object-fit: cover; }
+    .hero-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to right, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0) 100%);
+    }
+    .hero-content {
+      position: relative; z-index: 1; color: white;
+      padding: 40px 48px; max-width: 1280px; margin: 0 auto; width: 100%;
+    }
+    .hero-eyebrow { font-size: 14px; font-weight: 400; opacity: 0.85; margin-bottom: 10px; }
+    .hero-title { font-size: 34px; font-weight: 600; line-height: 1.2; margin-bottom: 10px; max-width: 520px; }
+    .hero-sub { font-size: 16px; font-weight: 400; opacity: 0.9; margin-bottom: 28px; }
+    .payment-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-top: 20px; }
+    .payment-row img { height: 22px; object-fit: contain; opacity: 0.85; }
+
+    /* ===== BUTTONS ===== */
+    .btn-orange {
+      background: var(--orange); color: rgba(255,255,255,0.9);
+      border: none; padding: 12px 28px; border-radius: 4px;
+      font-size: 16px; font-weight: 600; display: inline-block;
+      transition: background 0.2s; text-align: center; min-width: 150px;
+    }
+    .btn-orange:hover { background: var(--orange-hover); }
+    .btn-green-lg {
+      background: var(--green); color: rgba(255,255,255,0.9);
+      border: none; padding: 12px 28px; border-radius: 4px;
+      font-size: 16px; font-weight: 600; display: inline-block;
+      transition: background 0.2s; text-align: center; min-width: 150px;
+    }
+    .btn-green-lg:hover { background: var(--green-hover); }
+    .btn-outline {
+      background: transparent; color: var(--text-secondary);
+      border: 1px solid var(--border); padding: 10px 20px;
+      border-radius: 4px; font-size: 14px; font-weight: 600;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .btn-outline:hover { border-color: rgba(0,0,0,0.4); color: var(--text); }
+    .btn-delete {
+      background: transparent; color: var(--text-secondary);
+      border: 1px solid var(--border); padding: 10px 20px;
+      border-radius: 4px; font-size: 14px; font-weight: 600;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .btn-delete:hover { border-color: #d32f2f; color: #d32f2f; }
+
+    /* ===== SECTION WRAPPER ===== */
+    .section { padding: 16px; background: var(--bg); }
+    .section-inner { max-width: 1236px; margin: 0 auto; }
+    .section-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 16px; padding: 4px 0;
+    }
+    .section-title { font-size: 16px; font-weight: 700; color: var(--text); }
+    .section-nav { display: flex; align-items: center; gap: 8px; }
+    .nav-btn {
+      width: 32px; height: 32px; border-radius: 50%; border: none;
+      background: var(--orange-light); color: var(--orange);
+      font-size: 16px; display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: background 0.2s;
+    }
+    .nav-btn:hover { background: #ffdec4; }
+    .view-all {
+      background: var(--orange-light); color: var(--orange);
+      font-size: 12px; font-weight: 600; padding: 7px 4px 7px 12px;
+      border-radius: 4px; display: flex; align-items: center; gap: 2px;
+      cursor: pointer; border: none; transition: background 0.2s;
+    }
+    .view-all:hover { background: #ffdec4; }
+
+    /* ===== PRODUCT TABS ===== */
+    .tabs-row {
+      display: flex; gap: 8px; overflow-x: auto;
+      scrollbar-width: none; padding-bottom: 4px;
+    }
+    .tabs-row::-webkit-scrollbar { display: none; }
+    .tab-chip {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 8px; padding: 10px 18px;
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
+      cursor: pointer; min-width: 90px; flex-shrink: 0;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .tab-chip:hover, .tab-chip.active { border-color: var(--orange); box-shadow: 0 2px 8px rgba(255,102,0,0.15); }
+    .tab-chip .icon { font-size: 22px; }
+    .tab-chip .label { font-size: 11px; font-weight: 600; color: var(--text); white-space: nowrap; }
+
+    /* ===== PROMO CARDS ===== */
+    .promo-row {
+      display: flex; gap: 16px; overflow-x: auto;
+      scrollbar-width: none; padding-bottom: 4px;
+    }
+    .promo-row::-webkit-scrollbar { display: none; }
+    .promo-card {
+      background: var(--surface); border-radius: 8px; overflow: hidden;
+      min-width: 215px; width: 215px; flex-shrink: 0;
+      box-shadow: 0 8px 10px rgba(0,0,0,0.14), 0 1px 3px rgba(0,0,0,0.18);
+      border: 1px solid rgba(0,0,0,0.05);
+    }
+    .promo-card-img { width: 100%; aspect-ratio: 1; overflow: hidden; }
+    .promo-card-img img { width: 100%; height: 100%; object-fit: cover; }
+    .promo-card-body { padding: 12px; }
+    .promo-badge {
+      border: 1px solid rgba(0,0,0,0.38); border-radius: 100px;
+      padding: 3px 12px; font-size: 12px; color: var(--text-secondary);
+      display: inline-block; margin-bottom: 8px;
+    }
+    .promo-card-title { font-size: 13px; font-weight: 600; color: var(--text); line-height: 1.45; }
+
+    /* ===== SPIN WHEEL BANNER ===== */
+    .spin-banner { padding: 16px; background: var(--bg); }
+    .spin-banner-inner {
+      max-width: 1236px; margin: 0 auto; background: var(--dark);
+      border-radius: 8px; overflow: hidden; position: relative;
+      height: 309px; display: flex; align-items: center;
+    }
+    .spin-banner-bg { position: absolute; inset: 0; }
+    .spin-banner-bg img { width: 100%; height: 100%; object-fit: cover; }
+    .spin-banner-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to right, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.18) 35%, rgba(0,0,0,0) 60%);
+    }
+    .spin-banner-content {
+      position: relative; z-index: 1; color: white;
+      padding: 32px 40px; max-width: 50%;
+    }
+    .spin-banner-title { font-size: 24px; font-weight: 600; margin-bottom: 8px; }
+    .spin-banner-sub { font-size: 14px; font-weight: 400; opacity: 0.85; margin-bottom: 28px; }
+
+    /* ===== OVERLAYS & MODALS ===== */
+    .overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.72);
+      z-index: 1000; display: none; align-items: center; justify-content: center;
+      padding: 16px;
+    }
+    .overlay.active { display: flex; }
+    .modal {
+      background: var(--surface); border-radius: 12px;
+      padding: 32px; width: 100%; max-width: 460px; position: relative;
+      box-shadow: 0 24px 56px rgba(0,0,0,0.35);
+      max-height: 90vh; overflow-y: auto;
+    }
+    .modal-close {
+      position: absolute; top: 14px; right: 16px;
+      background: transparent; border: none;
+      font-size: 22px; color: var(--text-secondary); cursor: pointer; line-height: 1;
+      width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
+      border-radius: 50%; transition: background 0.2s;
+    }
+    .modal-close:hover { background: rgba(0,0,0,0.06); }
+    .modal-title { font-size: 20px; font-weight: 700; color: var(--text); margin-bottom: 24px; }
+    .form-group { margin-bottom: 16px; }
+    .form-label { font-size: 13px; font-weight: 600; color: var(--text); display: block; margin-bottom: 6px; }
+    .form-input {
+      width: 100%; border: 1px solid rgba(0,0,0,0.25); border-radius: 4px;
+      padding: 11px 14px; font-size: 15px; font-family: 'Open Sans', sans-serif;
+      color: var(--text); outline: none; transition: border-color 0.2s;
+    }
+    .form-input:focus { border-color: var(--orange); box-shadow: 0 0 0 3px rgba(255,102,0,0.12); }
+    .btn-block { width: 100%; display: block; padding: 13px; font-size: 16px; margin-top: 20px; }
+
+    /* ===== LOGIN MODAL ===== */
+    .login-logo { text-align: center; margin-bottom: 24px; }
+    .login-logo img { height: 22px; margin: 0 auto; }
+
+    /* ===== BONUS PAGE ===== */
+    .bonus-hero {
+      background: linear-gradient(135deg, var(--dark) 0%, #3d3f5c 100%);
+      padding: 36px 24px 28px;
+    }
+    .bonus-hero-inner { max-width: 1236px; margin: 0 auto; }
+    .bonus-hero h1 { color: white; font-size: 26px; font-weight: 700; margin-bottom: 6px; }
+    .bonus-hero p { color: rgba(255,255,255,0.65); font-size: 14px; }
+    .bonus-cards-grid {
+      max-width: 1236px; margin: 0 auto; padding: 28px 24px 40px;
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+    }
+    .b-card {
+      background: var(--surface); border-radius: 12px; overflow: hidden;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1); border: 1px solid rgba(0,0,0,0.06);
+    }
+    .b-card-thumb {
+      height: 180px; position: relative; overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .b-card-thumb-bg { position: absolute; inset: 0; }
+    .b-card-thumb-bg img { width: 100%; height: 100%; object-fit: cover; opacity: 0.45; }
+    .b-card-thumb-icon { position: relative; z-index: 1; font-size: 56px; }
+    .b-card-body { padding: 20px; }
+    .b-badge {
+      display: inline-block; font-size: 11px; font-weight: 600;
+      padding: 3px 10px; border-radius: 100px; margin-bottom: 10px;
+    }
+    .b-badge.available { background: #e8f5e9; color: #2e7d32; }
+    .b-badge.pending { background: #e3f2fd; color: #1565c0; }
+    .b-badge.locked { background: #fce4ec; color: #b71c1c; }
+    .b-card-title { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 8px; line-height: 1.35; }
+    .b-card-desc { font-size: 13px; color: var(--text-secondary); margin-bottom: 16px; line-height: 1.55; }
+    .b-card-actions { display: flex; gap: 8px; }
+    .b-card-actions .btn-orange { flex: 1; padding: 10px 14px; font-size: 14px; min-width: 0; }
+    .b-card-actions .btn-outline { padding: 10px 14px; font-size: 14px; }
+
+    /* ===== WHEEL MODAL ===== */
+    .wheel-modal {
+      background: #1e1f2e; border-radius: 16px;
+      padding: 28px 28px 32px; width: 100%; max-width: 500px; position: relative;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.55); text-align: center;
+    }
+    .wheel-header h2 { color: white; font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+    .wheel-header p { color: rgba(255,255,255,0.55); font-size: 13px; margin-bottom: 20px; }
+    .wheel-wrap { position: relative; margin: 0 auto; width: 320px; height: 320px; max-width: 100%; }
+    .wheel-wrap canvas { display: block; max-width: 100%; }
+    .spin-controls { margin-top: 24px; }
+    .spin-result-msg {
+      color: white; font-size: 15px; font-weight: 700; margin-bottom: 8px;
+      animation: fadeIn 0.4s ease;
+    }
+    .spin-result-sub { color: rgba(255,255,255,0.7); font-size: 13px; margin-bottom: 16px; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* ===== MESSAGES PAGE ===== */
+    .msg-page-content { max-width: 760px; margin: 0 auto; padding: 28px 20px 60px; }
+    .back-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      color: var(--text-secondary); font-size: 13px; font-weight: 600;
+      cursor: pointer; margin-bottom: 20px; background: none; border: none;
+      transition: color 0.2s;
+    }
+    .back-link:hover { color: var(--text); }
+    .msg-card { background: var(--surface); border-radius: 12px; overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
+    .msg-card-banner {
+      background: linear-gradient(135deg, #ff6600 0%, #ff8c33 60%, #ffa14d 100%);
+      padding: 24px 28px; display: flex; align-items: center; gap: 18px;
+    }
+    .msg-reward-icon {
+      width: 68px; height: 68px; border-radius: 50%;
+      background: rgba(255,255,255,0.2); backdrop-filter: blur(4px);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 32px; flex-shrink: 0;
+      border: 2px solid rgba(255,255,255,0.4);
+    }
+    .msg-banner-title { color: white; font-size: 20px; font-weight: 700; line-height: 1.2; }
+    .msg-banner-sub { color: rgba(255,255,255,0.8); font-size: 13px; margin-top: 4px; }
+    .msg-body { padding: 24px 28px; }
+    .reward-info-box {
+      background: #fafafa; border: 1px solid rgba(0,0,0,0.07);
+      border-radius: 8px; padding: 16px; display: flex; gap: 16px;
+      align-items: flex-start; margin-bottom: 20px;
+    }
+    .reward-info-icon {
+      width: 72px; height: 72px; border-radius: 10px; flex-shrink: 0;
+      background: linear-gradient(135deg, var(--orange) 0%, #ff8c33 100%);
+      display: flex; align-items: center; justify-content: center; font-size: 34px;
+    }
+    .reward-info-title { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+    .reward-info-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.55; }
+    .msg-desc { font-size: 14px; color: var(--text-secondary); line-height: 1.65; margin-bottom: 20px; }
+    .deposit-done-banner {
+      background: #e8f5e9; border: 1px solid #a5d6a7; border-radius: 8px;
+      padding: 14px 16px; display: none; align-items: center; gap: 12px; margin-bottom: 16px;
+    }
+    .deposit-done-banner.show { display: flex; animation: fadeIn 0.4s ease; }
+    .deposit-done-icon { font-size: 28px; }
+    .deposit-done-text strong { font-size: 14px; color: #2e7d32; display: block; margin-bottom: 2px; }
+    .deposit-done-text span { font-size: 12px; color: #388e3c; }
+    /* Accordion */
+    .accordion { border: 1px solid var(--border); border-radius: 8px; margin-bottom: 12px; overflow: hidden; }
+    .accordion-header {
+      padding: 14px 16px; background: #fafafa; cursor: pointer;
+      display: flex; align-items: center; justify-content: space-between;
+      font-size: 14px; font-weight: 600; color: var(--text);
+      transition: background 0.15s; border: none; width: 100%; text-align: left;
+    }
+    .accordion-header:hover { background: #f2f2f2; }
+    .chevron { transition: transform 0.25s; font-size: 11px; color: var(--text-secondary); }
+    .chevron.open { transform: rotate(180deg); }
+    .accordion-body {
+      max-height: 0; overflow: hidden;
+      transition: max-height 0.3s ease, padding 0.2s;
+      font-size: 13px; color: var(--text-secondary); line-height: 1.6;
+      border-top: 0 solid var(--border);
+      padding: 0 16px;
+    }
+    .accordion-body.open {
+      max-height: 400px; padding: 14px 16px;
+      border-top: 1px solid var(--border);
+    }
+    .msg-actions {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-top: 20px; gap: 12px;
+    }
+    .msg-actions-done { display: none; }
+    .msg-actions-done.show { display: flex; align-items: center; justify-content: space-between; margin-top: 20px; gap: 12px; }
+
+    /* ===== DEPOSIT MODAL ===== */
+    .deposit-modal { max-width: 520px; }
+    .amount-presets { display: flex; gap: 8px; margin-bottom: 12px; }
+    .preset-btn {
+      flex: 1; border: 1px solid var(--border); border-radius: 4px;
+      background: none; padding: 9px 6px; font-size: 14px; font-weight: 600;
+      color: var(--text); cursor: pointer; transition: all 0.2s;
+    }
+    .preset-btn.active, .preset-btn:hover { border-color: var(--orange); color: var(--orange); background: var(--orange-light); }
+    .payment-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 8px; }
+    .pay-opt {
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 10px 8px; display: flex; flex-direction: column;
+      align-items: center; gap: 6px; cursor: pointer; transition: all 0.2s;
+    }
+    .pay-opt.active { border-color: var(--orange); background: var(--orange-light); }
+    .pay-opt img { height: 20px; object-fit: contain; }
+    .pay-opt span { font-size: 11px; color: var(--text-secondary); }
+    .row-2col { display: flex; gap: 12px; }
+    .row-2col .form-group { flex: 1; }
+
+    /* ===== SUCCESS MODAL ===== */
+    .success-modal { max-width: 440px; text-align: center; }
+    .success-x {
+      position: absolute; top: 14px; right: 16px;
+      background: transparent; border: none; cursor: pointer;
+      color: var(--orange); font-size: 20px; font-weight: 700; line-height: 1;
+      width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
+      border-radius: 50%; transition: background 0.2s;
+    }
+    .success-x:hover { background: var(--orange-light); }
+    .success-icon {
+      width: 80px; height: 80px; background: #e8f5e9; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 20px; font-size: 40px; color: var(--green);
+    }
+    .success-amount { font-size: 30px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+    .success-tagline { font-size: 14px; color: var(--text-secondary); margin-bottom: 20px; }
+    .success-divider { height: 1px; background: var(--border); margin: 18px 0; }
+    .success-row { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 6px; }
+    .success-row span:first-child { color: var(--text-secondary); }
+    .success-row span:last-child { color: var(--text); font-weight: 600; }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 900px) {
+      .bonus-cards-grid { grid-template-columns: 1fr; max-width: 480px; }
+    }
+    @media (max-width: 768px) {
+      .hero { height: 300px; }
+      .hero-content { padding: 28px 20px; }
+      .hero-title { font-size: 22px; }
+      .hero-sub { font-size: 14px; }
+      .spin-banner-inner { height: 220px; }
+      .spin-banner-title { font-size: 18px; }
+      .spin-banner-content { padding: 24px 20px; }
+      .header-top { padding: 8px 12px; }
+      .header-nav { padding: 0 12px; }
+      .section { padding: 12px; }
+      .msg-page-content { padding: 16px 12px 48px; }
+      .msg-body { padding: 18px; }
+      .msg-card-banner { padding: 18px; }
+      .wheel-wrap { width: 260px; height: 260px; }
+      .wheel-modal { padding: 20px; }
+      .bonus-cards-grid { padding: 20px 16px 32px; }
+      .b-card-thumb { height: 150px; }
+      .deposit-modal { max-width: 100%; }
+    }
+    @media (max-width: 480px) {
+      .hero { height: 240px; }
+      .hero-title { font-size: 18px; }
+      .wheel-wrap { width: 220px; height: 220px; }
+      .payment-row img { height: 16px; }
+      .bonus-hero h1 { font-size: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- =========================================================== -->
+<!--  PAGE 1 · HOMEPAGE (logged-out)                             -->
+<!-- =========================================================== -->
+<div id="pg-home" class="page active">
+
+  <header class="header">
+    <div class="header-top">
+      <div class="header-logo">
+        <img src="https://www.figma.com/api/mcp/asset/da0c4497-4bf7-4320-a20c-be9b768b3c80" alt="Betsson">
+      </div>
+      <div class="header-actions">
+        <div class="header-help">?</div>
+        <button class="btn-login" onclick="showModal('modal-login')">Login</button>
+        <button class="btn-create">Create Account</button>
+      </div>
+    </div>
+    <nav class="header-nav">
+      <a href="#" class="active">Casino</a>
+      <a href="#">Live Casino</a>
+      <a href="#">Jackpots</a>
+      <a href="#">Sportsbook</a>
+      <a href="#">Live Betting</a>
+      <a href="#">Horse Racing</a>
+      <a href="#">Virtual Sports</a>
+      <a href="#">Poker</a>
+      <a href="#">Promotions</a>
+      <a href="#">Blog</a>
+    </nav>
+  </header>
+
+  <!-- Hero Banner -->
+  <section class="hero">
+    <div class="hero-bg">
+      <img src="https://www.figma.com/api/mcp/asset/89bdc070-3137-46d0-9f87-7ae6ddd2528e" alt="">
+    </div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <div class="hero-eyebrow">Casino and Sports Betting</div>
+      <div class="hero-title">Claim 100% Bonus up to €100</div>
+      <div class="hero-sub">Plus 300 Free Spins and €30 in Free Bets</div>
+      <button class="btn-green-lg">Create Account</button>
+      <div class="payment-row">
+        <img src="https://www.figma.com/api/mcp/asset/115dc9db-114b-4fb8-aabf-0888b660f958" alt="Visa">
+        <img src="https://www.figma.com/api/mcp/asset/15ffa3f1-9330-4438-81e1-be9a2223078c" alt="Mastercard">
+        <img src="https://www.figma.com/api/mcp/asset/d3ebe8ec-8880-4774-a4d6-15982bab8bbf" alt="Mifinity">
+        <img src="https://www.figma.com/api/mcp/asset/426e484a-6da4-4407-8441-45b5e6e000d1" alt="Luxon Pay">
+        <img src="https://www.figma.com/api/mcp/asset/2b769989-33a0-44f7-81c7-968b838dee43" alt="Trustly">
+        <img src="https://www.figma.com/api/mcp/asset/e342486d-f95f-47c7-9b4f-c20ec3e2ebb2" alt="Skrill">
+      </div>
+    </div>
+  </section>
+
+  <!-- Product Tabs Carousel -->
+  <section class="section">
+    <div class="section-inner">
+      <div class="section-header">
+        <span class="section-title">Products</span>
+      </div>
+      <div class="tabs-row">
+        <div class="tab-chip active"><span class="icon">🎰</span><span class="label">Casino</span></div>
+        <div class="tab-chip"><span class="icon">🃏</span><span class="label">Live Casino</span></div>
+        <div class="tab-chip"><span class="icon">💎</span><span class="label">Jackpots</span></div>
+        <div class="tab-chip"><span class="icon">⚽</span><span class="label">Sportsbook</span></div>
+        <div class="tab-chip"><span class="icon">📺</span><span class="label">Live Betting</span></div>
+        <div class="tab-chip"><span class="icon">🐎</span><span class="label">Horse Racing</span></div>
+        <div class="tab-chip"><span class="icon">🎮</span><span class="label">Virtual Sports</span></div>
+        <div class="tab-chip"><span class="icon">♣️</span><span class="label">Poker</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Promotions Carousel -->
+  <section class="section" style="padding-top:4px;">
+    <div class="section-inner">
+      <div class="section-header">
+        <span class="section-title">Promotions</span>
+        <div class="section-nav">
+          <button class="nav-btn">&#8249;</button>
+          <button class="nav-btn">&#8250;</button>
+          <button class="view-all">Go to Promotions <span style="font-size:14px;">&#9658;</span></button>
+        </div>
+      </div>
+      <div class="promo-row">
+        <div class="promo-card">
+          <div class="promo-card-img"><img src="https://www.figma.com/api/mcp/asset/1470d324-9378-4f78-9d6b-eb89174b32ac" alt="100% Casino Bonus"></div>
+          <div class="promo-card-body"><span class="promo-badge">Casino</span><div class="promo-card-title">Get a 100% Bonus up to €100 + Up to 300 CASH Spins!</div></div>
+        </div>
+        <div class="promo-card">
+          <div class="promo-card-img"><img src="https://www.figma.com/api/mcp/asset/b33bf1d0-b6c9-4611-82ad-b2823424b41c" alt="Casino Bonus"></div>
+          <div class="promo-card-body"><span class="promo-badge">Casino</span><div class="promo-card-title">Claim €100 Bonus + €35 in Free Bets</div></div>
+        </div>
+        <div class="promo-card">
+          <div class="promo-card-img"><img src="https://www.figma.com/api/mcp/asset/b165f3e0-46c1-4260-8237-cab33faac6c3" alt="Poker Bonus"></div>
+          <div class="promo-card-body"><span class="promo-badge">Casino</span><div class="promo-card-title">Get €600 for free with a new Poker account</div></div>
+        </div>
+        <div class="promo-card">
+          <div class="promo-card-img"><img src="https://www.figma.com/api/mcp/asset/b0bec3c5-134d-43ae-9b42-8ba509d9b594" alt="Betsson Million"></div>
+          <div class="promo-card-body"><span class="promo-badge">Casino</span><div class="promo-card-title">With Betsson you have a Million</div></div>
+        </div>
+        <div class="promo-card">
+          <div class="promo-card-img"><img src="https://www.figma.com/api/mcp/asset/5470f599-a07d-43a1-9c09-5a4735e956b8" alt="Games Global"></div>
+          <div class="promo-card-body"><span class="promo-badge">Casino</span><div class="promo-card-title">Games Global €150,000 Spin & Win</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Spin Wheel Full-Width Banner -->
+  <section class="spin-banner">
+    <div class="spin-banner-inner">
+      <div class="spin-banner-bg">
+        <img src="https://www.figma.com/api/mcp/asset/486e33e5-abd9-443f-a6fd-39389a384a8c" alt="">
+      </div>
+      <div class="spin-banner-overlay"></div>
+      <div class="spin-banner-content">
+        <div class="spin-banner-title">Spin for free daily</div>
+        <div class="spin-banner-sub">Betsson Wheel</div>
+        <button class="btn-orange" onclick="showModal('modal-login')">Opt-In</button>
+      </div>
+    </div>
+  </section>
+
+</div><!-- /pg-home -->
+
+
+<!-- =========================================================== -->
+<!--  PAGE 2 · BONUS PAGE (logged-in)                            -->
+<!-- =========================================================== -->
+<div id="pg-bonus" class="page">
+
+  <header class="header">
+    <div class="header-top">
+      <div class="header-logo">
+        <img src="https://www.figma.com/api/mcp/asset/da0c4497-4bf7-4320-a20c-be9b768b3c80" alt="Betsson">
+      </div>
+      <div class="header-actions">
+        <span style="color:rgba(255,255,255,0.85);font-size:13px;font-weight:600;margin-right:4px;">👤 My Account</span>
+        <button class="btn-login">Deposit</button>
+      </div>
+    </div>
+    <nav class="header-nav">
+      <a href="#">Casino</a><a href="#">Live Casino</a><a href="#">Jackpots</a>
+      <a href="#">Sportsbook</a><a href="#">Live Betting</a><a href="#">Horse Racing</a>
+      <a href="#">Virtual Sports</a><a href="#">Poker</a>
+      <a href="#" class="active">Promotions</a><a href="#">Blog</a>
+    </nav>
+  </header>
+
+  <div class="bonus-hero">
+    <div class="bonus-hero-inner">
+      <h1>My Bonuses</h1>
+      <p>Manage your active bonuses and rewards</p>
+    </div>
+  </div>
+
+  <div class="bonus-cards-grid">
+
+    <!-- Card 1: Spin Wheel (active) -->
+    <div class="b-card">
+      <div class="b-card-thumb" style="background: linear-gradient(135deg,#2e2f3c 0%,#4a3f6b 100%);">
+        <div class="b-card-thumb-bg">
+          <img src="https://www.figma.com/api/mcp/asset/486e33e5-abd9-443f-a6fd-39389a384a8c" alt="">
+        </div>
+        <div class="b-card-thumb-icon">🎡</div>
+      </div>
+      <div class="b-card-body">
+        <span class="b-badge available">🎉 Available</span>
+        <div class="b-card-title">Daily Spin Wheel Reward</div>
+        <div class="b-card-desc">Spin the Betsson Wheel for a chance to win Free Spins, Free Bets, and exclusive Deposit Offers!</div>
+        <div class="b-card-actions">
+          <button class="btn-outline">More Info</button>
+          <button class="btn-orange" onclick="openWheelModal()">Go To Wheel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 2: Welcome Bonus (pending) -->
+    <div class="b-card">
+      <div class="b-card-thumb" style="background: linear-gradient(135deg,#1a3a1a 0%,#2e7d32 100%);">
+        <div class="b-card-thumb-icon">💰</div>
+      </div>
+      <div class="b-card-body">
+        <span class="b-badge pending">⏳ Pending Deposit</span>
+        <div class="b-card-title">100% Match Bonus up to €100</div>
+        <div class="b-card-desc">Make your first deposit and receive a 100% match bonus up to €100 plus 300 Free Spins.</div>
+        <div class="b-card-actions">
+          <button class="btn-outline">More Info</button>
+          <button class="btn-orange">Claim Now</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 3: Free Bets (locked) -->
+    <div class="b-card">
+      <div class="b-card-thumb" style="background: linear-gradient(135deg,#1a237e 0%,#283593 100%);">
+        <div class="b-card-thumb-icon">⚽</div>
+      </div>
+      <div class="b-card-body">
+        <span class="b-badge locked">🔒 Locked</span>
+        <div class="b-card-title">€30 Free Bets on Sports</div>
+        <div class="b-card-desc">Unlock €30 in Free Bets when you place your first sports wager with Betsson Sportsbook.</div>
+        <div class="b-card-actions">
+          <button class="btn-outline">More Info</button>
+          <button class="btn-orange" style="opacity:0.45;cursor:not-allowed;" disabled>Locked</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div><!-- /pg-bonus -->
+
+
+<!-- =========================================================== -->
+<!--  PAGE 3 · MESSAGES / REWARD DETAIL                          -->
+<!-- =========================================================== -->
+<div id="pg-messages" class="page">
+
+  <header class="header">
+    <div class="header-top">
+      <div class="header-logo">
+        <img src="https://www.figma.com/api/mcp/asset/da0c4497-4bf7-4320-a20c-be9b768b3c80" alt="Betsson">
+      </div>
+      <div class="header-actions">
+        <span style="color:rgba(255,255,255,0.85);font-size:13px;font-weight:600;margin-right:4px;">👤 My Account</span>
+        <button class="btn-login">Deposit</button>
+      </div>
+    </div>
+    <nav class="header-nav">
+      <a href="#">Casino</a><a href="#">Live Casino</a><a href="#">Jackpots</a>
+      <a href="#">Sportsbook</a><a href="#">Live Betting</a><a href="#">Horse Racing</a>
+      <a href="#">Virtual Sports</a><a href="#">Poker</a>
+      <a href="#" class="active">Promotions</a><a href="#">Blog</a>
+    </nav>
+  </header>
+
+  <div class="msg-page-content">
+    <button class="back-link" onclick="showPage('pg-bonus')">&#8592; Back to My Bonuses</button>
+
+    <div class="msg-card">
+
+      <!-- Banner -->
+      <div class="msg-card-banner">
+        <div class="msg-reward-icon">🎡</div>
+        <div>
+          <div class="msg-banner-title">Deposit Offer + Free Spins</div>
+          <div class="msg-banner-sub">Betsson Wheel Reward — Congratulations!</div>
+        </div>
+      </div>
+
+      <div class="msg-body">
+
+        <!-- Reward info box -->
+        <div class="reward-info-box">
+          <div class="reward-info-icon">🎁</div>
+          <div>
+            <div class="reward-info-title">Deposit Offer + Free Spins</div>
+            <div class="reward-info-desc">You've won a special deposit bonus! Make a qualifying deposit to unlock your Free Spins and bonus funds. This offer must be claimed within 7 days.</div>
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div class="msg-desc">
+          Congratulations! Your Betsson Wheel spin has awarded you a <strong>Deposit Offer + Free Spins</strong>. To activate this reward, please make a deposit using the button below. Your bonus funds and Free Spins will be credited to your account immediately after the deposit is confirmed.
+        </div>
+
+        <!-- Deposit success banner (hidden by default) -->
+        <div id="deposit-done-banner" class="deposit-done-banner">
+          <div class="deposit-done-icon">✅</div>
+          <div class="deposit-done-text">
+            <strong>Deposit Successful — Bonus Activated!</strong>
+            <span>Your Free Spins have been credited to your account. Enjoy!</span>
+          </div>
+        </div>
+
+        <!-- More Information accordion -->
+        <div class="accordion">
+          <button class="accordion-header" onclick="toggleAccordion(this)">
+            More Information
+            <span class="chevron">▼</span>
+          </button>
+          <div class="accordion-body">
+            This reward includes a 100% deposit match bonus up to €50, plus 50 Free Spins on selected slot games. Minimum deposit required: €20. Wagering requirement: 35× on bonus amount. Free Spins must be used within 48 hours of being credited to your account.
+          </div>
+        </div>
+
+        <!-- Terms & Conditions accordion -->
+        <div class="accordion" style="margin-bottom:20px;">
+          <button class="accordion-header" onclick="toggleAccordion(this)">
+            Terms &amp; Conditions
+            <span class="chevron">▼</span>
+          </button>
+          <div class="accordion-body">
+            1. This offer is available to new and existing eligible players. 2. A minimum deposit of €20 is required to activate the bonus. 3. Free Spins will be credited within 24 hours of the qualifying deposit. 4. All bonus funds are subject to a 35× wagering requirement. 5. This offer cannot be combined with any other promotion. 6. Betsson reserves the right to modify or withdraw this offer at any time. 7. Standard Terms and Conditions apply. 18+. Gamble Responsibly. BeGambleAware.org
+          </div>
+        </div>
+
+        <!-- Default action buttons -->
+        <div class="msg-actions" id="msg-actions-default">
+          <button class="btn-delete">🗑 Delete</button>
+          <button class="btn-orange" onclick="showModal('modal-deposit')">Opt-in &amp; Deposit</button>
+        </div>
+
+        <!-- Post-deposit action buttons (hidden) -->
+        <div class="msg-actions-done" id="msg-actions-done">
+          <button class="btn-delete">🗑 Delete</button>
+          <button class="btn-orange">Go to Casino 🎰</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div><!-- /pg-messages -->
+
+
+<!-- =========================================================== -->
+<!--  MODAL · LOGIN                                               -->
+<!-- =========================================================== -->
+<div id="modal-login" class="overlay" onclick="bgClose(event,'modal-login')">
+  <div class="modal">
+    <button class="modal-close" onclick="hideModal('modal-login')">×</button>
+    <div class="login-logo">
+      <img src="https://www.figma.com/api/mcp/asset/da0c4497-4bf7-4320-a20c-be9b768b3c80" alt="Betsson" style="filter:invert(1) sepia(1) saturate(3) hue-rotate(-10deg) brightness(0.7);">
+    </div>
+    <div class="modal-title" style="text-align:center;">Welcome back</div>
+    <div class="form-group">
+      <label class="form-label" for="inp-email">Username / Email</label>
+      <input class="form-input" id="inp-email" type="email" placeholder="your@email.com" autocomplete="email">
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="inp-pass">Password</label>
+      <input class="form-input" id="inp-pass" type="password" placeholder="••••••••" autocomplete="current-password">
+    </div>
+    <button class="btn-orange btn-block" onclick="doLogin()">Login</button>
+    <p style="text-align:center;margin-top:14px;font-size:13px;color:var(--text-secondary);">
+      No account? <span style="color:var(--orange);font-weight:600;cursor:pointer;">Create Account</span>
+    </p>
+  </div>
+</div>
+
+<!-- =========================================================== -->
+<!--  MODAL · SPIN WHEEL                                          -->
+<!-- =========================================================== -->
+<div id="modal-wheel" class="overlay" onclick="bgClose(event,'modal-wheel')">
+  <div class="wheel-modal">
+    <button onclick="hideModal('modal-wheel')" style="position:absolute;top:12px;right:14px;background:transparent;border:none;color:rgba(255,255,255,0.5);font-size:26px;cursor:pointer;line-height:1;padding:0;">×</button>
+    <div class="wheel-header">
+      <h2>Betsson Wheel</h2>
+      <p>Spin to win your daily reward!</p>
+    </div>
+    <div class="wheel-wrap">
+      <canvas id="wheelCanvas"></canvas>
+    </div>
+    <div class="spin-controls" id="spinControls">
+      <button class="btn-orange" id="spinBtn" onclick="spinWheel()" style="min-width:200px;padding:13px 32px;font-size:16px;">Spin</button>
+    </div>
+  </div>
+</div>
+
+<!-- =========================================================== -->
+<!--  MODAL · DEPOSIT                                             -->
+<!-- =========================================================== -->
+<div id="modal-deposit" class="overlay" onclick="bgClose(event,'modal-deposit')">
+  <div class="modal deposit-modal">
+    <button class="modal-close" onclick="hideModal('modal-deposit')">×</button>
+    <div class="modal-title">Make a Deposit</div>
+
+    <div class="form-group">
+      <label class="form-label">Select Amount</label>
+      <div class="amount-presets">
+        <button class="preset-btn" onclick="pickAmount(this,20)">€20</button>
+        <button class="preset-btn active" onclick="pickAmount(this,50)">€50</button>
+        <button class="preset-btn" onclick="pickAmount(this,100)">€100</button>
+        <button class="preset-btn" onclick="pickAmount(this,200)">€200</button>
+      </div>
+      <input class="form-input" id="inp-amount" type="number" placeholder="Or enter custom amount" value="50" min="10">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Payment Method</label>
+      <div class="payment-grid">
+        <div class="pay-opt active" onclick="pickPayment(this)">
+          <img src="https://www.figma.com/api/mcp/asset/115dc9db-114b-4fb8-aabf-0888b660f958" alt="Visa">
+          <span>Visa</span>
+        </div>
+        <div class="pay-opt" onclick="pickPayment(this)">
+          <img src="https://www.figma.com/api/mcp/asset/15ffa3f1-9330-4438-81e1-be9a2223078c" alt="Mastercard">
+          <span>Mastercard</span>
+        </div>
+        <div class="pay-opt" onclick="pickPayment(this)">
+          <img src="https://www.figma.com/api/mcp/asset/e342486d-f95f-47c7-9b4f-c20ec3e2ebb2" alt="Skrill">
+          <span>Skrill</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Card Number</label>
+      <input class="form-input" type="text" placeholder="**** **** **** 4242" maxlength="19">
+    </div>
+    <div class="row-2col">
+      <div class="form-group">
+        <label class="form-label">Expiry</label>
+        <input class="form-input" type="text" placeholder="MM / YY" maxlength="7">
+      </div>
+      <div class="form-group">
+        <label class="form-label">CVV</label>
+        <input class="form-input" type="text" placeholder="•••" maxlength="4">
+      </div>
+    </div>
+    <button class="btn-green-lg btn-block" id="depositBtn" onclick="doDeposit()">Deposit €50</button>
+  </div>
+</div>
+
+<!-- =========================================================== -->
+<!--  MODAL · DEPOSIT SUCCESS                                      -->
+<!-- =========================================================== -->
+<div id="modal-success" class="overlay" onclick="bgClose(event,'modal-success')">
+  <div class="modal success-modal">
+    <button class="success-x" onclick="doSuccessClose()">✕</button>
+    <div class="success-icon">✓</div>
+    <div class="success-amount">€50.00 Deposited</div>
+    <div class="success-tagline">Your bonus is now active. Good luck!</div>
+    <div class="success-divider"></div>
+    <div class="success-row"><span>Transaction Ref</span><span>TXN-2026-0714-8832</span></div>
+    <div class="success-row"><span>Date</span><span>14 July 2026, 10:42 AM</span></div>
+    <div class="success-row"><span>Method</span><span>Visa •••• 4242</span></div>
+    <div class="success-row"><span>Amount</span><span style="color:var(--green);">€50.00</span></div>
+    <div class="success-divider"></div>
+    <button class="btn-green-lg btn-block" onclick="doSuccessClose()" style="margin-top:0;">Close</button>
+  </div>
+</div>
+
+
+<!-- =========================================================== -->
+<!--  JAVASCRIPT                                                   -->
+<!-- =========================================================== -->
+<script>
+/* ── Page navigation ── */
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'instant' });
+}
+
+/* ── Modals ── */
+function showModal(id) { document.getElementById(id).classList.add('active'); }
+function hideModal(id) { document.getElementById(id).classList.remove('active'); }
+function bgClose(e, id) { if (e.target === e.currentTarget) hideModal(id); }
+
+/* ── Login ── */
+function doLogin() {
+  hideModal('modal-login');
+  showPage('pg-bonus');
+}
+
+/* ── Deposit ── */
+function doDeposit() {
+  hideModal('modal-deposit');
+  showModal('modal-success');
+}
+
+/* ── Success close ── */
+function doSuccessClose() {
+  hideModal('modal-success');
+  document.getElementById('deposit-done-banner').classList.add('show');
+  document.getElementById('msg-actions-default').style.display = 'none';
+  document.getElementById('msg-actions-done').classList.add('show');
+}
+
+/* ── Accordion ── */
+function toggleAccordion(btn) {
+  const body = btn.nextElementSibling;
+  const chevron = btn.querySelector('.chevron');
+  body.classList.toggle('open');
+  chevron.classList.toggle('open');
+}
+
+/* ── Deposit amount presets ── */
+function pickAmount(el, val) {
+  document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('inp-amount').value = val;
+  document.getElementById('depositBtn').textContent = `Deposit €${val}`;
+}
+document.getElementById('inp-amount').addEventListener('input', function() {
+  const v = parseInt(this.value) || '';
+  document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('depositBtn').textContent = v ? `Deposit €${v}` : 'Deposit';
+});
+
+/* ── Payment method select ── */
+function pickPayment(el) {
+  document.querySelectorAll('.pay-opt').forEach(o => o.classList.remove('active'));
+  el.classList.add('active');
+}
+
+/* ── Wheel: open ── */
+function openWheelModal() {
+  showModal('modal-wheel');
+  // Give browser one paint cycle to lay out the modal before measuring canvas
+  requestAnimationFrame(() => requestAnimationFrame(initWheel));
+}
+
+/* ─────────────── SPIN WHEEL ─────────────── */
+const SEGMENTS = [
+  { label: ['Free', 'Spins'],             color: '#8e24aa' },
+  { label: ['Free', 'Bets'],              color: '#e53935' },
+  { label: ['Deposit Offer', '+ Free Spins'], color: '#ff6600', win: true },
+  { label: ['Free', 'Spins'],             color: '#1e88e5' },
+  { label: ['Deposit Offer', '+ Free Bets'],  color: '#43a047' },
+  { label: ['Free', 'Bets'],              color: '#fb8c00' },
+  { label: ['Free', 'Spins'],             color: '#d81b60' },
+  { label: ['Deposit Offer', '+ Free Spins'], color: '#00acc1' },
+];
+const WIN_IDX = 2; // "Deposit Offer + Free Spins"
+
+let canvas, ctx, wheelSize, wheelAngle, spinning = false;
+
+function initWheel() {
+  canvas = document.getElementById('wheelCanvas');
+  ctx = canvas.getContext('2d');
+  const wrap = canvas.parentElement;
+  const rawW = wrap.clientWidth;
+  const dim = rawW > 10 ? Math.min(rawW, 320) : 320;
+  canvas.width = dim;
+  canvas.height = dim;
+  wheelSize = dim;
+  // Start with segment 0 at the top
+  wheelAngle = -(Math.PI / 2) - (Math.PI / SEGMENTS.length);
+  spinning = false;
+
+  // Reset controls
+  document.getElementById('spinControls').innerHTML =
+    '<button class="btn-orange" id="spinBtn" onclick="spinWheel()" style="min-width:200px;padding:13px 32px;font-size:16px;">Spin</button>';
+
+  drawWheel(wheelAngle);
+}
+
+function drawWheel(angle) {
+  if (!ctx) return;
+  const n = SEGMENTS.length;
+  const seg = (2 * Math.PI) / n;
+  const cx = wheelSize / 2;
+  const cy = wheelSize / 2;
+  const R = wheelSize / 2 - 6;
+  const fz = wheelSize < 280 ? 9 : 11;
+
+  ctx.clearRect(0, 0, wheelSize, wheelSize);
+
+  /* segments */
+  for (let i = 0; i < n; i++) {
+    const s = angle + i * seg;
+    const e = s + seg;
+    // Fill
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.arc(cx, cy, R, s, e);
+    ctx.closePath();
+    ctx.fillStyle = SEGMENTS[i].color;
+    ctx.fill();
+    // Divider lines
+    ctx.strokeStyle = 'rgba(255,255,255,0.35)';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    // Text
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(s + seg / 2);
+    ctx.textAlign = 'right';
+    ctx.fillStyle = '#ffffff';
+    ctx.font = `bold ${fz}px "Open Sans", sans-serif`;
+    const lines = SEGMENTS[i].label;
+    const lineH = fz + 3;
+    const yOff = -(lines.length - 1) * lineH / 2;
+    lines.forEach((ln, li) => ctx.fillText(ln, R - 10, yOff + li * lineH + fz / 3));
+    ctx.restore();
+  }
+
+  /* outer ring */
+  ctx.beginPath();
+  ctx.arc(cx, cy, R, 0, 2 * Math.PI);
+  ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+  ctx.lineWidth = 4;
+  ctx.stroke();
+
+  /* LED dots */
+  const dotR = 4;
+  const dotCount = 32;
+  for (let i = 0; i < dotCount; i++) {
+    const a = (2 * Math.PI * i) / dotCount;
+    const dx = cx + (R + 2) * Math.cos(a);
+    const dy = cy + (R + 2) * Math.sin(a);
+    ctx.beginPath();
+    ctx.arc(dx, dy, dotR, 0, 2 * Math.PI);
+    ctx.fillStyle = i % 2 === 0 ? '#ff6600' : '#ffcc00';
+    ctx.fill();
+  }
+
+  /* center circle */
+  ctx.beginPath();
+  ctx.arc(cx, cy, 40, 0, 2 * Math.PI);
+  const cg = ctx.createRadialGradient(cx - 8, cy - 8, 4, cx, cy, 40);
+  cg.addColorStop(0, '#ff8c33');
+  cg.addColorStop(1, '#ff6600');
+  ctx.fillStyle = cg;
+  ctx.fill();
+  ctx.strokeStyle = 'white';
+  ctx.lineWidth = 3;
+  ctx.stroke();
+  ctx.fillStyle = 'white';
+  ctx.font = `bold ${fz + 1}px "Open Sans", sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.fillText('betsson', cx, cy + 4);
+
+  /* pointer arrow */
+  const pW = wheelSize < 280 ? 10 : 14;
+  const pTop = cy - R - 2;
+  ctx.beginPath();
+  ctx.moveTo(cx, pTop);
+  ctx.lineTo(cx - pW, pTop + pW * 1.6);
+  ctx.lineTo(cx + pW, pTop + pW * 1.6);
+  ctx.closePath();
+  ctx.fillStyle = '#ff6600';
+  ctx.fill();
+  ctx.strokeStyle = 'white';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+}
+
+function spinWheel() {
+  if (spinning) return;
+  spinning = true;
+  document.getElementById('spinBtn').disabled = true;
+  document.getElementById('spinBtn').style.opacity = '0.5';
+
+  const n = SEGMENTS.length;
+  const seg = (2 * Math.PI) / n;
+
+  // We want middle of WIN_IDX segment to end at top (pointer at -PI/2)
+  // At final angle θ: θ + (WIN_IDX + 0.5)*seg ≡ -PI/2 + 2kPI (mod 2PI)
+  // θ_base = -PI/2 - (WIN_IDX + 0.5)*seg
+  const baseTarget = -Math.PI / 2 - (WIN_IDX + 0.5) * seg;
+  const startAngle = wheelAngle;
+
+  // Minimum total rotation: 5 full turns + correct stop
+  const minRot = 5 * 2 * Math.PI;
+  const delta = baseTarget - startAngle;
+  // Normalize to positive, then add full turns
+  const rawDelta = ((delta % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+  // Extra full turns (5–7 randomised)
+  const extraTurns = (5 + Math.floor(Math.random() * 3)) * 2 * Math.PI;
+  const finalAngle = startAngle + rawDelta + extraTurns;
+
+  const duration = 5500;
+  const start = performance.now();
+
+  function frame(now) {
+    const t = Math.min((now - start) / duration, 1);
+    // Ease-out quart
+    const ease = 1 - Math.pow(1 - t, 4);
+    wheelAngle = startAngle + (finalAngle - startAngle) * ease;
+    drawWheel(wheelAngle);
+    if (t < 1) {
+      requestAnimationFrame(frame);
+    } else {
+      wheelAngle = finalAngle;
+      spinning = false;
+      onWheelStop();
+    }
+  }
+  requestAnimationFrame(frame);
+}
+
+function onWheelStop() {
+  // Draw win highlight on center
+  const cx = wheelSize / 2;
+  const cy = wheelSize / 2;
+  const fz = wheelSize < 280 ? 8 : 10;
+
+  ctx.beginPath();
+  ctx.arc(cx, cy, 44, 0, 2 * Math.PI);
+  ctx.fillStyle = '#ff6600';
+  ctx.fill();
+  ctx.strokeStyle = '#ffcc00';
+  ctx.lineWidth = 3;
+  ctx.stroke();
+
+  ctx.fillStyle = 'white';
+  ctx.textAlign = 'center';
+  ctx.font = `bold ${fz + 2}px "Open Sans", sans-serif`;
+  ctx.fillText('🎉 WIN!', cx, cy - 8);
+  ctx.font = `bold ${fz}px "Open Sans", sans-serif`;
+  ctx.fillText('Deposit +', cx, cy + 5);
+  ctx.fillText('Free Spins', cx, cy + 17);
+
+  // Replace controls
+  document.getElementById('spinControls').innerHTML = `
+    <div class="spin-result-msg">🎉 You Won!</div>
+    <div class="spin-result-sub">Deposit Offer + Free Spins</div>
+    <button class="btn-orange" onclick="goToMessages()" style="min-width:200px;padding:13px 32px;font-size:16px;">Continue</button>
+  `;
+}
+
+function goToMessages() {
+  hideModal('modal-wheel');
+  showPage('pg-messages');
+}
+</script>
+</body>
+</html>
