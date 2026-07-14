@@ -532,19 +532,13 @@
       width: 50%; height: 10%; background: transparent; border: none;
       cursor: pointer; z-index: 5;
     }
-    .wm-win-overlay {
-      position: absolute; inset: 0; background: rgba(0,0,5,0.93);
-      display: none; flex-direction: column;
-      align-items: center; justify-content: center; z-index: 10;
+    /* Win state: image switches to Figma congratulations screen */
+    .wm-wheel-img.wm-win-state { object-fit: cover; animation: fadeIn 0.5s ease; }
+    /* Transparent click target sitting over the 'Αποδοχή' button in the win image */
+    .wm-accept-btn {
+      position: absolute; bottom: 7%; left: 17%; width: 66%; height: 8%;
+      background: transparent; border: none; cursor: pointer; z-index: 5; display: none;
     }
-    .wm-win-overlay.show { display: flex; animation: fadeIn 0.4s ease; }
-    .wm-win-icon { font-size: 56px; margin-bottom: 16px; }
-    .wm-win-title { font-size: 22px; font-weight: 700; color: white; margin-bottom: 8px; }
-    .wm-win-sub {
-      font-size: 15px; color: rgba(255,255,255,0.7); margin-bottom: 24px;
-      text-align: center; padding: 0 24px; max-width: 420px;
-    }
-    .wm-continue-btn { min-width: 200px; padding: 13px 32px; font-size: 16px; }
     @keyframes wm-pulse {
       0%, 100% { filter: brightness(1); }
       50% { filter: brightness(1.9) saturate(1.4); }
@@ -695,6 +689,7 @@
       .bp-content { padding: 16px; }
       #modal-wheel { align-items: flex-end; padding: 0; }
       .wheel-modal { border-radius: 16px 16px 0 0; max-width: 100%; max-height: 95vh; }
+      .wm-accept-btn { left: 13%; width: 74%; }
       .deposit-modal { max-width: 100%; }
     }
     @media (max-width: 480px) {
@@ -1245,13 +1240,8 @@
       <!-- Transparent overlay positioned over the \"Play Here\" button in the image -->
       <button class="wm-play-trigger" id="wm-play-trigger"
         onclick="spinWheelNew()" aria-label="Play"></button>
-      <!-- Win result overlay (hidden until spin completes) -->
-      <div class="wm-win-overlay" id="wm-win-overlay">
-        <div class="wm-win-icon">🎉</div>
-        <div class="wm-win-title">Deposit Offer + Free Spins!</div>
-        <div class="wm-win-sub">Your spin wheel reward is ready to claim. Make a deposit to activate your bonus and free spins.</div>
-        <button class="btn-orange wm-continue-btn" onclick="goToMessages()">Continue</button>
-      </div>
+      <!-- Transparent click target over the Αποδοχή button in the Figma win image -->
+      <button class="wm-accept-btn" id="wm-accept-btn" onclick="goToMessages()" aria-label="Αποδοχή"></button>
     </div>
   </div>
 </div>
@@ -1427,27 +1417,34 @@ function pickPayment(el) {
 /* ── Wheel modal ── */
 function openWheelModal() {
   showModal('modal-wheel');
-  // Reset to initial state
-  document.getElementById('wm-win-overlay').classList.remove('show');
+  // Reset to initial spin state
   var trigger = document.getElementById('wm-play-trigger');
-  if (trigger) trigger.style.display = '';
+  var acceptBtn = document.getElementById('wm-accept-btn');
   var img = document.getElementById('wm-wheel-img');
-  img.classList.remove('wm-spinning');
-  // Use mobile-specific image on small screens
-  img.src = window.innerWidth <= 768
-    ? 'https://www.figma.com/api/mcp/asset/793de323-f2ac-4662-b923-068fd6dc76cd'
-    : 'https://www.figma.com/api/mcp/asset/dcfbe71d-4985-42b6-acf5-a4865bb97223';
+  if (trigger) trigger.style.display = '';
+  if (acceptBtn) acceptBtn.style.display = 'none';
+  if (img) {
+    img.classList.remove('wm-spinning', 'wm-win-state');
+    img.src = window.innerWidth <= 768
+      ? 'https://www.figma.com/api/mcp/asset/793de323-f2ac-4662-b923-068fd6dc76cd'
+      : 'https://www.figma.com/api/mcp/asset/dcfbe71d-4985-42b6-acf5-a4865bb97223';
+  }
 }
 
 function spinWheelNew() {
   var trigger = document.getElementById('wm-play-trigger');
   var img = document.getElementById('wm-wheel-img');
-  var winOverlay = document.getElementById('wm-win-overlay');
+  var acceptBtn = document.getElementById('wm-accept-btn');
   if (trigger) trigger.style.display = 'none';
   if (img) img.classList.add('wm-spinning');
   setTimeout(function() {
-    if (img) img.classList.remove('wm-spinning');
-    if (winOverlay) winOverlay.classList.add('show');
+    if (img) {
+      img.classList.remove('wm-spinning');
+      img.classList.add('wm-win-state');
+      // Desktop and mobile share the same win image asset
+      img.src = 'https://www.figma.com/api/mcp/asset/c4a36e15-74b1-4ddd-9832-911d28fcde9a';
+    }
+    if (acceptBtn) acceptBtn.style.display = 'block';
   }, 2500);
 }
 
