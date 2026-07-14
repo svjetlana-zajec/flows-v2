@@ -546,79 +546,82 @@
     .wm-wheel-img.wm-spinning { animation: wm-pulse 2.5s ease-in-out; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* ===== MESSAGES PAGE ===== */
-    .msg-page-content { max-width: 760px; margin: 0 auto; padding: 28px 20px 60px; }
-    .back-link {
-      display: inline-flex; align-items: center; gap: 6px;
+    /* ===== MESSAGES PAGE (Figma redesign) ===== */
+    .msg2-mobile-back {
+      display: none; align-items: center; gap: 6px;
       color: var(--text-secondary); font-size: 13px; font-weight: 600;
-      cursor: pointer; margin-bottom: 20px; background: none; border: none;
-      transition: color 0.2s;
+      cursor: pointer; margin-bottom: 16px; background: none; border: none;
     }
-    .back-link:hover { color: var(--text); }
-    .msg-card { background: var(--surface); border-radius: 12px; overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
-    .msg-card-banner {
-      background: linear-gradient(135deg, #ff6600 0%, #ff8c33 60%, #ffa14d 100%);
-      padding: 24px 28px; display: flex; align-items: center; gap: 18px;
+    .msg2-mobile-back:hover { color: var(--text); }
+    .msg2-title { font-size: 24px; font-weight: 700; color: rgba(0,0,0,0.87); margin-bottom: 20px; }
+    .msg2-tabs { display: flex; gap: 8px; margin-bottom: 20px; }
+    .msg2-tab {
+      padding: 8px 20px; border-radius: 100px; font-size: 14px; font-weight: 600;
+      cursor: pointer; border: 1.5px solid rgba(0,0,0,0.2); background: white;
+      color: rgba(0,0,0,0.6); transition: all 0.15s;
     }
-    .msg-reward-icon {
-      width: 68px; height: 68px; border-radius: 50%;
-      background: rgba(255,255,255,0.2); backdrop-filter: blur(4px);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 32px; flex-shrink: 0;
-      border: 2px solid rgba(255,255,255,0.4);
+    .msg2-tab.active { border-color: #ff6600; color: #ff6600; }
+    .msg2-cards { display: flex; flex-direction: column; gap: 16px; }
+    .msg2-card {
+      background: white; border: 1px solid rgba(0,0,0,0.05); border-radius: 8px;
+      padding: 16px; display: flex; flex-direction: column; gap: 24px;
     }
-    .msg-banner-title { color: white; font-size: 20px; font-weight: 700; line-height: 1.2; }
-    .msg-banner-sub { color: rgba(255,255,255,0.8); font-size: 13px; margin-top: 4px; }
-    .msg-body { padding: 24px 28px; }
-    .reward-info-box {
-      background: #fafafa; border: 1px solid rgba(0,0,0,0.07);
-      border-radius: 8px; padding: 16px; display: flex; gap: 16px;
-      align-items: flex-start; margin-bottom: 20px;
+    .msg2-card-header { display: flex; gap: 16px; align-items: flex-start; }
+    .msg2-thumb {
+      width: 64px; height: 64px; min-width: 64px; border-radius: 8px;
+      overflow: hidden; background: #f0f0f0;
     }
-    .reward-info-icon {
-      width: 72px; height: 72px; border-radius: 10px; flex-shrink: 0;
-      background: linear-gradient(135deg, var(--orange) 0%, #ff8c33 100%);
-      display: flex; align-items: center; justify-content: center; font-size: 34px;
+    .msg2-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .msg2-card-meta { flex: 1; min-width: 0; }
+    .msg2-title-row { display: flex; gap: 8px; align-items: flex-start; }
+    .msg2-card-title { font-size: 16px; font-weight: 700; color: rgba(0,0,0,0.87); line-height: 24px; flex: 1; }
+    .msg2-unread-dot { width: 8px; height: 8px; min-width: 8px; border-radius: 50%; background: #608df2; margin-top: 9px; flex-shrink: 0; }
+    .msg2-card-date { font-size: 14px; color: rgba(0,0,0,0.6); line-height: 20px; margin-top: 2px; }
+    .msg2-card-body { font-size: 14px; color: rgba(0,0,0,0.87); line-height: 20px; }
+    .msg2-card-body ul { padding-left: 21px; margin: 4px 0 0; }
+    .msg2-card-body li { margin-bottom: 2px; }
+    .msg2-buttons { display: flex; gap: 8px; align-items: stretch; justify-content: flex-end; }
+    .msg2-btn-delete {
+      min-width: 150px; padding: 12px 16px; border-radius: 4px;
+      background: none; border: none; cursor: pointer;
+      font-size: 16px; font-weight: 600; color: #ff6600;
     }
-    .reward-info-title { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
-    .reward-info-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.55; }
-    .msg-desc { font-size: 14px; color: var(--text-secondary); line-height: 1.65; margin-bottom: 20px; }
-    .deposit-done-banner {
-      background: #e8f5e9; border: 1px solid #a5d6a7; border-radius: 8px;
-      padding: 14px 16px; display: none; align-items: center; gap: 12px; margin-bottom: 16px;
+    .msg2-btn-primary {
+      min-width: 150px; padding: 12px 16px; border-radius: 4px;
+      background: #ff6600; border: none; cursor: pointer;
+      font-size: 16px; font-weight: 600; color: rgba(255,255,255,0.87);
     }
-    .deposit-done-banner.show { display: flex; animation: fadeIn 0.4s ease; }
-    .deposit-done-icon { font-size: 28px; }
-    .deposit-done-text strong { font-size: 14px; color: #2e7d32; display: block; margin-bottom: 2px; }
-    .deposit-done-text span { font-size: 12px; color: #388e3c; }
-    /* Accordion */
-    .accordion { border: 1px solid var(--border); border-radius: 8px; margin-bottom: 12px; overflow: hidden; }
-    .accordion-header {
-      padding: 14px 16px; background: #fafafa; cursor: pointer;
+    .msg2-btn-primary:hover { background: #e55c00; }
+    .msg2-info-banner {
+      border: 1px solid rgba(0,0,0,0.05); border-radius: 8px; padding: 16px;
+      display: flex; gap: 12px; align-items: flex-start;
+    }
+    .msg2-info-icon { width: 24px; height: 24px; min-width: 24px; }
+    .msg2-info-icon img { width: 24px; height: 24px; display: block; }
+    .msg2-info-text { font-size: 14px; color: rgba(0,0,0,0.87); line-height: 20px; }
+    .msg2-info-text ul { padding-left: 21px; margin: 0; }
+    .msg2-info-text li { margin-bottom: 4px; }
+    .msg2-tnc-wrapper { background: white; border-radius: 12px; overflow: hidden; }
+    .msg2-tnc-row {
       display: flex; align-items: center; justify-content: space-between;
-      font-size: 14px; font-weight: 600; color: var(--text);
-      transition: background 0.15s; border: none; width: 100%; text-align: left;
+      padding: 16px; cursor: pointer; background: none; border: none; width: 100%;
     }
-    .accordion-header:hover { background: #f2f2f2; }
-    .chevron { transition: transform 0.25s; font-size: 11px; color: var(--text-secondary); }
-    .chevron.open { transform: rotate(180deg); }
-    .accordion-body {
+    .msg2-tnc-label { font-size: 14px; color: rgba(0,0,0,0.87); }
+    .msg2-tnc-icon { width: 20px; height: 20px; position: relative; flex-shrink: 0; }
+    .msg2-tnc-icon img { position: absolute; inset: 0; width: 100%; height: 100%; display: block; transition: transform 0.25s; }
+    .msg2-tnc-icon.open img { transform: rotate(180deg); }
+    .msg2-tnc-body {
       max-height: 0; overflow: hidden;
       transition: max-height 0.3s ease, padding 0.2s;
-      font-size: 13px; color: var(--text-secondary); line-height: 1.6;
-      border-top: 0 solid var(--border);
-      padding: 0 16px;
+      font-size: 13px; color: rgba(0,0,0,0.6); line-height: 1.6; padding: 0 16px;
     }
-    .accordion-body.open {
-      max-height: 400px; padding: 14px 16px;
-      border-top: 1px solid var(--border);
+    .msg2-tnc-body.open { max-height: 400px; padding: 0 16px 14px; }
+    .bp-menu-badge {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 18px; height: 18px; border-radius: 50%;
+      background: #ff6600; color: white; font-size: 10px; font-weight: 700;
+      margin-left: auto; flex-shrink: 0;
     }
-    .msg-actions {
-      display: flex; align-items: center; justify-content: space-between;
-      margin-top: 20px; gap: 12px;
-    }
-    .msg-actions-done { display: none; }
-    .msg-actions-done.show { display: flex; align-items: center; justify-content: space-between; margin-top: 20px; gap: 12px; }
 
     /* ===== DEPOSIT MODAL ===== */
     .deposit-modal { max-width: 520px; }
@@ -671,6 +674,7 @@
       .bp-hdr-icon-btn { display: none; }
       .bp-hdr-account { display: none; }
       .bp-hdr-withdraw { display: none; }
+      .msg2-mobile-back { display: inline-flex; }
     }
     @media (max-width: 768px) {
       .hero { height: 300px; }
@@ -683,9 +687,9 @@
       .header-top { padding: 8px 12px; }
       .header-nav { padding: 0 12px; }
       .section { padding: 12px; }
-      .msg-page-content { padding: 16px 12px 48px; }
-      .msg-body { padding: 18px; }
-      .msg-card-banner { padding: 18px; }
+      .msg2-buttons { flex-direction: column; }
+      .msg2-btn-delete { min-width: unset; order: 2; }
+      .msg2-btn-primary { min-width: unset; order: 1; }
       .bp-content { padding: 16px; }
       #modal-wheel { align-items: flex-end; padding: 0; }
       .wheel-modal { border-radius: 16px 16px 0 0; max-width: 100%; max-height: 95vh; }
@@ -1042,14 +1046,34 @@
 <!-- =========================================================== -->
 <div id="pg-messages" class="page">
 
+  <!-- Logged-in header -->
   <header class="header">
     <div class="header-top">
       <div class="header-logo">
         <img src="https://www.figma.com/api/mcp/asset/da0c4497-4bf7-4320-a20c-be9b768b3c80" alt="Betsson">
       </div>
-      <div class="header-actions">
-        <span style="color:rgba(255,255,255,0.85);font-size:13px;font-weight:600;margin-right:4px;">👤 My Account</span>
-        <button class="btn-login">Deposit</button>
+      <div class="header-actions bp-header-actions">
+        <!-- Help -->
+        <button class="bp-hdr-icon-btn" title="Help">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" stroke="rgba(255,255,255,0.75)" stroke-width="1.5"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" stroke="rgba(255,255,255,0.75)" stroke-width="1.5" stroke-linecap="round"/><circle cx="12" cy="17" r="0.5" fill="rgba(255,255,255,0.75)" stroke="rgba(255,255,255,0.75)" stroke-width="1"/></svg>
+        </button>
+        <!-- Gifts -->
+        <button class="bp-hdr-icon-btn" title="Gifts">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><polyline points="20 12 20 22 4 22 4 12" stroke="rgba(255,255,255,0.75)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="2" y="7" width="20" height="5" rx="1" stroke="rgba(255,255,255,0.75)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><line x1="12" y1="22" x2="12" y2="7" stroke="rgba(255,255,255,0.75)" stroke-width="1.5" stroke-linecap="round"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z" stroke="rgba(255,255,255,0.75)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z" stroke="rgba(255,255,255,0.75)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <!-- Messages with badge -->
+        <button class="bp-hdr-icon-btn" title="Messages" style="position:relative;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="rgba(255,255,255,0.75)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><polyline points="22,6 12,13 2,6" stroke="rgba(255,255,255,0.75)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span class="bp-hdr-badge">3</span>
+        </button>
+        <!-- Account + balance -->
+        <div class="bp-hdr-account">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="rgba(255,255,255,0.85)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="7" r="4" stroke="rgba(255,255,255,0.85)" stroke-width="1.5"/></svg>
+          <span class="bp-hdr-balance">€200.00</span>
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 3.5l3 3 3-3" stroke="rgba(255,255,255,0.6)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <button class="bp-hdr-withdraw">Withdraw</button>
+        <button class="bp-hdr-deposit">Deposit</button>
       </div>
     </div>
     <nav class="header-nav">
@@ -1060,82 +1084,168 @@
     </nav>
   </header>
 
-  <div class="msg-page-content">
-    <button class="back-link" onclick="showPage('pg-bonus')">&#8592; Back to My Bonuses</button>
-
-    <div class="msg-card">
-
-      <!-- Banner -->
-      <div class="msg-card-banner">
-        <div class="msg-reward-icon">🎡</div>
-        <div>
-          <div class="msg-banner-title">Deposit Offer + Free Spins</div>
-          <div class="msg-banner-sub">Betsson Wheel Reward — Congratulations!</div>
-        </div>
-      </div>
-
-      <div class="msg-body">
-
-        <!-- Reward info box -->
-        <div class="reward-info-box">
-          <div class="reward-info-icon">🎁</div>
-          <div>
-            <div class="reward-info-title">Deposit Offer + Free Spins</div>
-            <div class="reward-info-desc">You've won a special deposit bonus! Make a qualifying deposit to unlock your Free Spins and bonus funds. This offer must be claimed within 7 days.</div>
-          </div>
-        </div>
-
-        <!-- Description -->
-        <div class="msg-desc">
-          Congratulations! Your Betsson Wheel spin has awarded you a <strong>Deposit Offer + Free Spins</strong>. To activate this reward, please make a deposit using the button below. Your bonus funds and Free Spins will be credited to your account immediately after the deposit is confirmed.
-        </div>
-
-        <!-- Deposit success banner (hidden by default) -->
-        <div id="deposit-done-banner" class="deposit-done-banner">
-          <div class="deposit-done-icon">✅</div>
-          <div class="deposit-done-text">
-            <strong>Deposit Successful — Bonus Activated!</strong>
-            <span>Your Free Spins have been credited to your account. Enjoy!</span>
-          </div>
-        </div>
-
-        <!-- More Information accordion -->
-        <div class="accordion">
-          <button class="accordion-header" onclick="toggleAccordion(this)">
-            More Information
-            <span class="chevron">▼</span>
-          </button>
-          <div class="accordion-body">
-            This reward includes a 100% deposit match bonus up to €50, plus 50 Free Spins on selected slot games. Minimum deposit required: €20. Wagering requirement: 35× on bonus amount. Free Spins must be used within 48 hours of being credited to your account.
-          </div>
-        </div>
-
-        <!-- Terms & Conditions accordion -->
-        <div class="accordion" style="margin-bottom:20px;">
-          <button class="accordion-header" onclick="toggleAccordion(this)">
-            Terms &amp; Conditions
-            <span class="chevron">▼</span>
-          </button>
-          <div class="accordion-body">
-            1. This offer is available to new and existing eligible players. 2. A minimum deposit of €20 is required to activate the bonus. 3. Free Spins will be credited within 24 hours of the qualifying deposit. 4. All bonus funds are subject to a 35× wagering requirement. 5. This offer cannot be combined with any other promotion. 6. Betsson reserves the right to modify or withdraw this offer at any time. 7. Standard Terms and Conditions apply. 18+. Gamble Responsibly. BeGambleAware.org
-          </div>
-        </div>
-
-        <!-- Default action buttons -->
-        <div class="msg-actions" id="msg-actions-default">
-          <button class="btn-delete">🗑 Delete</button>
-          <button class="btn-orange" onclick="showModal('modal-deposit')">Opt-in &amp; Deposit</button>
-        </div>
-
-        <!-- Post-deposit action buttons (hidden) -->
-        <div class="msg-actions-done" id="msg-actions-done">
-          <button class="btn-delete">🗑 Delete</button>
-          <button class="btn-orange">Go to Casino 🎰</button>
-        </div>
-
-      </div>
+  <!-- Mobile balance bar -->
+  <div class="mobile-balance-bar">
+    <div>
+      <div class="mobile-balance-label">Balance</div>
+      <div class="mobile-balance-amount">&euro; 65,987</div>
     </div>
+    <button class="bp-hdr-deposit" style="padding:8px 20px;">Deposit</button>
   </div>
+
+  <!-- Main layout: sidebar + content -->
+  <div class="bp-layout">
+
+    <!-- Left sidebar (desktop only) -->
+    <aside class="bp-sidebar">
+      <div class="bp-menu-group">
+        <div class="bp-menu-item" style="display:flex;align-items:center;">
+          Notifications
+          <span class="bp-menu-badge">3</span>
+        </div>
+        <div class="bp-menu-item active" style="display:flex;align-items:center;gap:8px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="#ff6600" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><polyline points="22,6 12,13 2,6" stroke="#ff6600" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Messages
+          <span class="bp-menu-badge">3</span>
+        </div>
+      </div>
+      <div class="bp-menu-group">
+        <div class="bp-menu-group-header">History <span>&#8963;</span></div>
+        <div class="bp-menu-item">Bet History Sportsbook</div>
+        <div class="bp-menu-item">Transactions</div>
+      </div>
+      <div class="bp-menu-group">
+        <div class="bp-menu-group-header">Account Settings <span>&#8963;</span></div>
+        <div class="bp-menu-item">Change Password</div>
+        <div class="bp-menu-item">My Profile</div>
+        <div class="bp-menu-item">Verification</div>
+        <div class="bp-menu-item">Marketing Settings</div>
+        <div class="bp-menu-item">Passkeys</div>
+      </div>
+      <div class="bp-menu-group">
+        <div class="bp-menu-group-header">Help &amp; Support <span>&#8963;</span></div>
+        <div class="bp-menu-item">Cookie Policy</div>
+        <div class="bp-menu-item">Privacy Policy</div>
+        <div class="bp-menu-item">T&amp;C</div>
+        <div class="bp-menu-item">Help Centre</div>
+        <div class="bp-menu-item">Personal Data</div>
+      </div>
+    </aside>
+
+    <!-- Main content -->
+    <main class="bp-content">
+
+      <!-- Mobile-only back link -->
+      <button class="msg2-mobile-back" onclick="showPage('pg-bonus')">&#8592; Back</button>
+
+      <h2 class="bp-heading">Messages</h2>
+
+      <!-- Active / Expired tabs -->
+      <div class="msg2-tabs">
+        <button class="msg2-tab active">Active</button>
+        <button class="msg2-tab">Expired</button>
+      </div>
+
+      <!-- Message cards -->
+      <div class="msg2-cards">
+
+        <!-- Card 1: Claim 10 Free Spins on 3 Buzzing Wilds -->
+        <div class="msg2-card">
+          <div class="msg2-card-header">
+            <div class="msg2-thumb">
+              <img src="https://www.figma.com/api/mcp/asset/3d6956a2-7dde-4467-81d5-8ada00808377" alt="3 Buzzing Wilds">
+            </div>
+            <div class="msg2-card-meta">
+              <div class="msg2-title-row">
+                <span class="msg2-card-title">Claim 10 Free Spins on 3 Buzzing Wilds</span>
+                <span class="msg2-unread-dot"></span>
+              </div>
+              <div class="msg2-card-date">Received on Tuesday, 14 July 2026 at 10:34</div>
+            </div>
+          </div>
+
+          <div class="msg2-card-body">
+            <strong>How to claim offer:</strong>
+            <ul>
+              <li>Opt-in and make a deposit of 10 &euro; or more.</li>
+              <li>Receive 10 Free Spins on the game 3 Buzzing Wilds. (0,20 &euro; per spin).</li>
+              <li>Open the game to claim your Free Spins within 7 days of receiving them.</li>
+            </ul>
+          </div>
+
+          <div class="msg2-buttons">
+            <button class="msg2-btn-delete">Delete</button>
+            <button class="msg2-btn-primary" onclick="showModal('modal-deposit')">Opt-in &amp; Deposit</button>
+          </div>
+
+          <div class="msg2-info-banner">
+            <div class="msg2-info-icon">
+              <img src="https://www.figma.com/api/mcp/asset/3d0ff877-0c5d-4bf1-8fb8-a33227e39e16" alt="">
+            </div>
+            <div class="msg2-info-text">
+              <ul>
+                <li>You need to claim the Free Spins reward by opening the game within 7 days of making the deposit.</li>
+                <li>Any potential winnings from the Free Spins will be credited to your account as bonus money.</li>
+                <li>Deposits made through the following payment option/s will not be eligible for the offer.</li>
+                <li>21+. Terms and Conditions apply.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="msg2-tnc-wrapper">
+            <button class="msg2-tnc-row" onclick="toggleMsg2Tnc(this)">
+              <span class="msg2-tnc-label">Terms and Conditions</span>
+              <span class="msg2-tnc-icon">
+                <img src="https://www.figma.com/api/mcp/asset/9cd54289-abd6-42e7-8fa7-46c278cd2042" alt="">
+              </span>
+            </button>
+            <div class="msg2-tnc-body">
+              This promotion is available to eligible players only. Minimum deposit of &euro;10 required. Free Spins valid for 7 days from receipt. Winnings from Free Spins credited as bonus money subject to wagering requirements. 21+. Gamble Responsibly.
+            </div>
+          </div>
+
+        </div><!-- /msg2-card 1 -->
+
+        <!-- Card 2: Some free spins -->
+        <div class="msg2-card">
+          <div class="msg2-card-header">
+            <div class="msg2-thumb">
+              <img src="https://www.figma.com/api/mcp/asset/f8b46c7d-8161-4fab-9bd3-ac9f82ee3247" alt="Some free spins">
+            </div>
+            <div class="msg2-card-meta">
+              <div class="msg2-title-row">
+                <span class="msg2-card-title">Some free spins?</span>
+              </div>
+              <div class="msg2-card-date">Thursday, December 20, 2020, at 04:23</div>
+            </div>
+          </div>
+
+          <div class="msg2-card-body">
+            We're giving away 200 free spins on Ancient Fortunes Poseidon Megaways, good luck
+          </div>
+
+          <div class="msg2-buttons">
+            <button class="msg2-btn-delete">Delete</button>
+            <button class="msg2-btn-primary">Download</button>
+          </div>
+
+        </div><!-- /msg2-card 2 -->
+
+      </div><!-- /msg2-cards -->
+
+    </main><!-- /bp-content -->
+  </div><!-- /bp-layout -->
+
+  <!-- Dark footer -->
+  <footer class="bp-page-footer">
+    <div class="bp-footer-label">Follow us</div>
+    <div class="bp-footer-socials">
+      <div class="bp-footer-social-icon">&#x1D54F;</div>
+      <div class="bp-footer-social-icon">f</div>
+      <div class="bp-footer-social-icon">&#x1F4F7;</div>
+      <div class="bp-footer-social-icon">&#x25B6;</div>
+    </div>
+  </footer>
 
 </div><!-- /pg-messages -->
 
@@ -1382,9 +1492,7 @@ function doDeposit() {
 /* ── Success close ── */
 function doSuccessClose() {
   hideModal('modal-success');
-  document.getElementById('deposit-done-banner').classList.add('show');
-  document.getElementById('msg-actions-default').style.display = 'none';
-  document.getElementById('msg-actions-done').classList.add('show');
+  showPage('pg-messages');
 }
 
 /* ── Accordion ── */
@@ -1393,6 +1501,13 @@ function toggleAccordion(btn) {
   const chevron = btn.querySelector('.chevron');
   body.classList.toggle('open');
   chevron.classList.toggle('open');
+}
+
+function toggleMsg2Tnc(btn) {
+  const icon = btn.querySelector('.msg2-tnc-icon');
+  const body = btn.nextElementSibling;
+  if (icon) icon.classList.toggle('open');
+  if (body) body.classList.toggle('open');
 }
 
 /* ── Deposit amount presets ── */
