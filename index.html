@@ -502,22 +502,51 @@
       color: white; font-size: 18px; cursor: pointer; font-weight: 700;
     }
 
-    /* ===== WHEEL MODAL ===== */
+    /* ===== WHEEL MODAL (Figma image-based) ===== */
     .wheel-modal {
-      background: #1e1f2e; border-radius: 16px;
-      padding: 28px 28px 32px; width: 100%; max-width: 500px; position: relative;
-      box-shadow: 0 32px 80px rgba(0,0,0,0.55); text-align: center;
+      background: #000002; border-radius: 8px;
+      width: 100%; max-width: 800px; max-height: 90vh;
+      overflow: hidden; display: flex; flex-direction: column;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.7);
     }
-    .wheel-header h2 { color: white; font-size: 20px; font-weight: 700; margin-bottom: 4px; }
-    .wheel-header p { color: rgba(255,255,255,0.55); font-size: 13px; margin-bottom: 20px; }
-    .wheel-wrap { position: relative; margin: 0 auto; width: 320px; height: 320px; max-width: 100%; }
-    .wheel-wrap canvas { display: block; max-width: 100%; }
-    .spin-controls { margin-top: 24px; }
-    .spin-result-msg {
-      color: white; font-size: 15px; font-weight: 700; margin-bottom: 8px;
-      animation: fadeIn 0.4s ease;
+    .wm-header {
+      background: #000002; height: 56px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: flex-end;
+      padding: 0 16px;
     }
-    .spin-result-sub { color: rgba(255,255,255,0.7); font-size: 13px; margin-bottom: 16px; }
+    .wm-close-btn {
+      background: none; border: none; cursor: pointer;
+      width: 40px; height: 40px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.15s;
+    }
+    .wm-close-btn:hover { background: rgba(255,255,255,0.1); }
+    .wm-close-btn img { width: 24px; height: 24px; }
+    .wm-body { position: relative; overflow: hidden; flex: 1; }
+    .wm-wheel-img { display: block; width: 100%; height: auto; }
+    .wm-play-trigger {
+      position: absolute; bottom: 14%; left: 50%; transform: translateX(-50%);
+      width: 55%; height: 12%; background: transparent; border: none;
+      cursor: pointer; z-index: 5;
+    }
+    .wm-win-overlay {
+      position: absolute; inset: 0; background: rgba(0,0,5,0.93);
+      display: none; flex-direction: column;
+      align-items: center; justify-content: center; z-index: 10;
+    }
+    .wm-win-overlay.show { display: flex; animation: fadeIn 0.4s ease; }
+    .wm-win-icon { font-size: 56px; margin-bottom: 16px; }
+    .wm-win-title { font-size: 22px; font-weight: 700; color: white; margin-bottom: 8px; }
+    .wm-win-sub {
+      font-size: 15px; color: rgba(255,255,255,0.7); margin-bottom: 24px;
+      text-align: center; padding: 0 24px; max-width: 420px;
+    }
+    .wm-continue-btn { min-width: 200px; padding: 13px 32px; font-size: 16px; }
+    @keyframes wm-pulse {
+      0%, 100% { filter: brightness(1); }
+      50% { filter: brightness(1.9) saturate(1.4); }
+    }
+    .wm-wheel-img.wm-spinning { animation: wm-pulse 2.5s ease-in-out; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
     /* ===== MESSAGES PAGE ===== */
@@ -660,15 +689,14 @@
       .msg-page-content { padding: 16px 12px 48px; }
       .msg-body { padding: 18px; }
       .msg-card-banner { padding: 18px; }
-      .wheel-wrap { width: 260px; height: 260px; }
-      .wheel-modal { padding: 20px; }
       .bp-content { padding: 16px; }
+      #modal-wheel { align-items: flex-end; padding: 0; }
+      .wheel-modal { border-radius: 16px 16px 0 0; max-width: 100%; max-height: 95vh; }
       .deposit-modal { max-width: 100%; }
     }
     @media (max-width: 480px) {
       .hero { height: 240px; }
       .hero-title { font-size: 18px; }
-      .wheel-wrap { width: 220px; height: 220px; }
       .payment-row img { height: 16px; }
     }
   </style>
@@ -1200,16 +1228,27 @@
 <!-- =========================================================== -->
 <div id="modal-wheel" class="overlay" onclick="bgClose(event,'modal-wheel')">
   <div class="wheel-modal">
-    <button onclick="hideModal('modal-wheel')" style="position:absolute;top:12px;right:14px;background:transparent;border:none;color:rgba(255,255,255,0.5);font-size:26px;cursor:pointer;line-height:1;padding:0;">×</button>
-    <div class="wheel-header">
-      <h2>Betsson Wheel</h2>
-      <p>Spin to win your daily reward!</p>
+    <!-- Header: black bar + close button -->
+    <div class="wm-header">
+      <button class="wm-close-btn" onclick="hideModal('modal-wheel')" aria-label="Close">
+        <img src="https://www.figma.com/api/mcp/asset/866d4b0d-97d9-4f5d-a764-e778d62695ca" alt="Close">
+      </button>
     </div>
-    <div class="wheel-wrap">
-      <canvas id="wheelCanvas"></canvas>
-    </div>
-    <div class="spin-controls" id="spinControls">
-      <button class="btn-orange" id="spinBtn" onclick="spinWheel()" style="min-width:200px;padding:13px 32px;font-size:16px;">Spin</button>
+    <!-- Wheel content: Figma image -->
+    <div class="wm-body">
+      <img id="wm-wheel-img" class="wm-wheel-img"
+        src="https://www.figma.com/api/mcp/asset/dcfbe71d-4985-42b6-acf5-a4865bb97223"
+        alt="Betsson Spin Wheel">
+      <!-- Transparent overlay positioned over the \"Play Here\" button in the image -->
+      <button class="wm-play-trigger" id="wm-play-trigger"
+        onclick="spinWheelNew()" aria-label="Play"></button>
+      <!-- Win result overlay (hidden until spin completes) -->
+      <div class="wm-win-overlay" id="wm-win-overlay">
+        <div class="wm-win-icon">🎉</div>
+        <div class="wm-win-title">Deposit Offer + Free Spins!</div>
+        <div class="wm-win-sub">Your spin wheel reward is ready to claim. Make a deposit to activate your bonus and free spins.</div>
+        <button class="btn-orange wm-continue-btn" onclick="goToMessages()">Continue</button>
+      </div>
     </div>
   </div>
 </div>
@@ -1382,212 +1421,34 @@ function pickPayment(el) {
   el.classList.add('active');
 }
 
-/* ── Wheel: open ── */
+/* ── Wheel modal ── */
 function openWheelModal() {
   showModal('modal-wheel');
-  // Give browser one paint cycle to lay out the modal before measuring canvas
-  requestAnimationFrame(() => requestAnimationFrame(initWheel));
+  // Reset to initial state
+  document.getElementById('wm-win-overlay').classList.remove('show');
+  var trigger = document.getElementById('wm-play-trigger');
+  if (trigger) trigger.style.display = '';
+  var img = document.getElementById('wm-wheel-img');
+  img.classList.remove('wm-spinning');
+  // Use mobile-specific image on small screens
+  img.src = window.innerWidth <= 768
+    ? 'https://www.figma.com/api/mcp/asset/793de323-f2ac-4662-b923-068fd6dc76cd'
+    : 'https://www.figma.com/api/mcp/asset/dcfbe71d-4985-42b6-acf5-a4865bb97223';
 }
 
-/* ─────────────── SPIN WHEEL ─────────────── */
-const SEGMENTS = [
-  { label: ['Free', 'Spins'],             color: '#8e24aa' },
-  { label: ['Free', 'Bets'],              color: '#e53935' },
-  { label: ['Deposit Offer', '+ Free Spins'], color: '#ff6600', win: true },
-  { label: ['Free', 'Spins'],             color: '#1e88e5' },
-  { label: ['Deposit Offer', '+ Free Bets'],  color: '#43a047' },
-  { label: ['Free', 'Bets'],              color: '#fb8c00' },
-  { label: ['Free', 'Spins'],             color: '#d81b60' },
-  { label: ['Deposit Offer', '+ Free Spins'], color: '#00acc1' },
-];
-const WIN_IDX = 2; // "Deposit Offer + Free Spins"
-
-let canvas, ctx, wheelSize, wheelAngle, spinning = false;
-
-function initWheel() {
-  canvas = document.getElementById('wheelCanvas');
-  ctx = canvas.getContext('2d');
-  const wrap = canvas.parentElement;
-  const rawW = wrap.clientWidth;
-  const dim = rawW > 10 ? Math.min(rawW, 320) : 320;
-  canvas.width = dim;
-  canvas.height = dim;
-  wheelSize = dim;
-  // Start with segment 0 at the top
-  wheelAngle = -(Math.PI / 2) - (Math.PI / SEGMENTS.length);
-  spinning = false;
-
-  // Reset controls
-  document.getElementById('spinControls').innerHTML =
-    '<button class="btn-orange" id="spinBtn" onclick="spinWheel()" style="min-width:200px;padding:13px 32px;font-size:16px;">Spin</button>';
-
-  drawWheel(wheelAngle);
+function spinWheelNew() {
+  var trigger = document.getElementById('wm-play-trigger');
+  var img = document.getElementById('wm-wheel-img');
+  var winOverlay = document.getElementById('wm-win-overlay');
+  if (trigger) trigger.style.display = 'none';
+  if (img) img.classList.add('wm-spinning');
+  setTimeout(function() {
+    if (img) img.classList.remove('wm-spinning');
+    if (winOverlay) winOverlay.classList.add('show');
+  }, 2500);
 }
 
-function drawWheel(angle) {
-  if (!ctx) return;
-  const n = SEGMENTS.length;
-  const seg = (2 * Math.PI) / n;
-  const cx = wheelSize / 2;
-  const cy = wheelSize / 2;
-  const R = wheelSize / 2 - 6;
-  const fz = wheelSize < 280 ? 9 : 11;
-
-  ctx.clearRect(0, 0, wheelSize, wheelSize);
-
-  /* segments */
-  for (let i = 0; i < n; i++) {
-    const s = angle + i * seg;
-    const e = s + seg;
-    // Fill
-    ctx.beginPath();
-    ctx.moveTo(cx, cy);
-    ctx.arc(cx, cy, R, s, e);
-    ctx.closePath();
-    ctx.fillStyle = SEGMENTS[i].color;
-    ctx.fill();
-    // Divider lines
-    ctx.strokeStyle = 'rgba(255,255,255,0.35)';
-    ctx.lineWidth = 2;
-    ctx.stroke();
-    // Text
-    ctx.save();
-    ctx.translate(cx, cy);
-    ctx.rotate(s + seg / 2);
-    ctx.textAlign = 'right';
-    ctx.fillStyle = '#ffffff';
-    ctx.font = `bold ${fz}px "Open Sans", sans-serif`;
-    const lines = SEGMENTS[i].label;
-    const lineH = fz + 3;
-    const yOff = -(lines.length - 1) * lineH / 2;
-    lines.forEach((ln, li) => ctx.fillText(ln, R - 10, yOff + li * lineH + fz / 3));
-    ctx.restore();
-  }
-
-  /* outer ring */
-  ctx.beginPath();
-  ctx.arc(cx, cy, R, 0, 2 * Math.PI);
-  ctx.strokeStyle = 'rgba(255,255,255,0.5)';
-  ctx.lineWidth = 4;
-  ctx.stroke();
-
-  /* LED dots */
-  const dotR = 4;
-  const dotCount = 32;
-  for (let i = 0; i < dotCount; i++) {
-    const a = (2 * Math.PI * i) / dotCount;
-    const dx = cx + (R + 2) * Math.cos(a);
-    const dy = cy + (R + 2) * Math.sin(a);
-    ctx.beginPath();
-    ctx.arc(dx, dy, dotR, 0, 2 * Math.PI);
-    ctx.fillStyle = i % 2 === 0 ? '#ff6600' : '#ffcc00';
-    ctx.fill();
-  }
-
-  /* center circle */
-  ctx.beginPath();
-  ctx.arc(cx, cy, 40, 0, 2 * Math.PI);
-  const cg = ctx.createRadialGradient(cx - 8, cy - 8, 4, cx, cy, 40);
-  cg.addColorStop(0, '#ff8c33');
-  cg.addColorStop(1, '#ff6600');
-  ctx.fillStyle = cg;
-  ctx.fill();
-  ctx.strokeStyle = 'white';
-  ctx.lineWidth = 3;
-  ctx.stroke();
-  ctx.fillStyle = 'white';
-  ctx.font = `bold ${fz + 1}px "Open Sans", sans-serif`;
-  ctx.textAlign = 'center';
-  ctx.fillText('betsson', cx, cy + 4);
-
-  /* pointer arrow */
-  const pW = wheelSize < 280 ? 10 : 14;
-  const pTop = cy - R - 2;
-  ctx.beginPath();
-  ctx.moveTo(cx, pTop);
-  ctx.lineTo(cx - pW, pTop + pW * 1.6);
-  ctx.lineTo(cx + pW, pTop + pW * 1.6);
-  ctx.closePath();
-  ctx.fillStyle = '#ff6600';
-  ctx.fill();
-  ctx.strokeStyle = 'white';
-  ctx.lineWidth = 2;
-  ctx.stroke();
-}
-
-function spinWheel() {
-  if (spinning) return;
-  spinning = true;
-  document.getElementById('spinBtn').disabled = true;
-  document.getElementById('spinBtn').style.opacity = '0.5';
-
-  const n = SEGMENTS.length;
-  const seg = (2 * Math.PI) / n;
-
-  // We want middle of WIN_IDX segment to end at top (pointer at -PI/2)
-  // At final angle θ: θ + (WIN_IDX + 0.5)*seg ≡ -PI/2 + 2kPI (mod 2PI)
-  // θ_base = -PI/2 - (WIN_IDX + 0.5)*seg
-  const baseTarget = -Math.PI / 2 - (WIN_IDX + 0.5) * seg;
-  const startAngle = wheelAngle;
-
-  // Minimum total rotation: 5 full turns + correct stop
-  const minRot = 5 * 2 * Math.PI;
-  const delta = baseTarget - startAngle;
-  // Normalize to positive, then add full turns
-  const rawDelta = ((delta % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
-  // Extra full turns (5–7 randomised)
-  const extraTurns = (5 + Math.floor(Math.random() * 3)) * 2 * Math.PI;
-  const finalAngle = startAngle + rawDelta + extraTurns;
-
-  const duration = 5500;
-  const start = performance.now();
-
-  function frame(now) {
-    const t = Math.min((now - start) / duration, 1);
-    // Ease-out quart
-    const ease = 1 - Math.pow(1 - t, 4);
-    wheelAngle = startAngle + (finalAngle - startAngle) * ease;
-    drawWheel(wheelAngle);
-    if (t < 1) {
-      requestAnimationFrame(frame);
-    } else {
-      wheelAngle = finalAngle;
-      spinning = false;
-      onWheelStop();
-    }
-  }
-  requestAnimationFrame(frame);
-}
-
-function onWheelStop() {
-  // Draw win highlight on center
-  const cx = wheelSize / 2;
-  const cy = wheelSize / 2;
-  const fz = wheelSize < 280 ? 8 : 10;
-
-  ctx.beginPath();
-  ctx.arc(cx, cy, 44, 0, 2 * Math.PI);
-  ctx.fillStyle = '#ff6600';
-  ctx.fill();
-  ctx.strokeStyle = '#ffcc00';
-  ctx.lineWidth = 3;
-  ctx.stroke();
-
-  ctx.fillStyle = 'white';
-  ctx.textAlign = 'center';
-  ctx.font = `bold ${fz + 2}px "Open Sans", sans-serif`;
-  ctx.fillText('🎉 WIN!', cx, cy - 8);
-  ctx.font = `bold ${fz}px "Open Sans", sans-serif`;
-  ctx.fillText('Deposit +', cx, cy + 5);
-  ctx.fillText('Free Spins', cx, cy + 17);
-
-  // Replace controls
-  document.getElementById('spinControls').innerHTML = `
-    <div class="spin-result-msg">🎉 You Won!</div>
-    <div class="spin-result-sub">Deposit Offer + Free Spins</div>
-    <button class="btn-orange" onclick="goToMessages()" style="min-width:200px;padding:13px 32px;font-size:16px;">Continue</button>
-  `;
-}
+// Canvas wheel functions removed — replaced by Figma image-based wheel
 
 function goToMessages() {
   hideModal('modal-wheel');
