@@ -251,8 +251,89 @@
     .btn-block { width: 100%; display: block; padding: 13px; font-size: 16px; margin-top: 20px; }
 
     /* ===== LOGIN MODAL ===== */
-    .login-logo { text-align: center; margin-bottom: 24px; }
-    .login-logo img { height: 22px; margin: 0 auto; }
+    /* Override base .modal sizing for login */
+    .modal-login { max-width: 440px; padding: 0; overflow: hidden; }
+    .lm-header {
+      display: flex; align-items: center; justify-content: center;
+      padding: 12px 16px; position: relative; border-bottom: 1px solid rgba(0,0,0,0.08);
+    }
+    .lm-title { font-size: 16px; font-weight: 700; color: var(--text); }
+    .lm-close {
+      position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+      background: none; border: none; cursor: pointer;
+      width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
+      border-radius: 50%; transition: background 0.15s; padding: 0;
+    }
+    .lm-close:hover { background: rgba(0,0,0,0.06); }
+    .lm-close img { width: 24px; height: 24px; }
+    .lm-body { padding: 16px; display: flex; flex-direction: column; gap: 32px; }
+    .lm-section { display: flex; flex-direction: column; gap: 16px; }
+    .lm-subtitle { font-size: 20px; font-weight: 600; color: var(--text); line-height: 1.6; }
+    .lm-passkey-btn {
+      width: 100%; background: white; border: 1px solid rgba(0,0,0,0.1);
+      border-radius: 4px; padding: 12px 16px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 12px;
+      font-size: 16px; font-weight: 600; color: var(--text);
+      transition: background 0.15s;
+    }
+    .lm-passkey-btn:hover { background: rgba(0,0,0,0.03); }
+    .lm-passkey-btn img { width: 24px; height: 24px; flex-shrink: 0; }
+    .lm-or {
+      display: flex; align-items: center; gap: 8px;
+      color: rgba(0,0,0,0.38); font-size: 12px; font-weight: 600;
+    }
+    .lm-or-line { flex: 1; height: 1px; background: rgba(0,0,0,0.12); }
+    .lm-inputs { display: flex; flex-direction: column; gap: 12px; }
+    .lm-input-wrap { position: relative; width: 100%; }
+    .lm-input {
+      width: 100%; border: 1.5px solid rgba(0,0,0,0.1); border-radius: 4px;
+      padding: 14px 44px 14px 16px; font-size: 16px; font-family: 'Open Sans', sans-serif;
+      color: var(--text); outline: none; background: white;
+      transition: border-color 0.2s;
+    }
+    .lm-input:focus { border-color: var(--orange); box-shadow: 0 0 0 3px rgba(255,102,0,0.1); }
+    .lm-input-icon {
+      position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+      width: 20px; height: 20px; cursor: pointer; opacity: 0.6;
+    }
+    .lm-remember-row {
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .lm-checkbox-row { display: flex; align-items: center; gap: 12px; cursor: pointer; }
+    .lm-checkbox {
+      width: 20px; height: 20px; border: 2px solid rgba(0,0,0,0.38);
+      border-radius: 4px; background: white; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: border-color 0.2s;
+    }
+    .lm-checkbox-label { font-size: 14px; color: var(--text); }
+    .lm-forgot { font-size: 14px; font-weight: 600; color: var(--orange); cursor: pointer; background: none; border: none; }
+    .lm-login-btn {
+      width: 100%; height: 48px; background: var(--orange);
+      color: rgba(255,255,255,0.87); border: none; border-radius: 4px;
+      font-size: 16px; font-weight: 600; cursor: pointer;
+      transition: background 0.2s;
+    }
+    .lm-login-btn:hover { background: var(--orange-hover); }
+    .lm-create-section { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+    .lm-create-label { font-size: 14px; color: var(--text); }
+    .lm-create-link { font-size: 12px; font-weight: 600; color: var(--orange); cursor: pointer; background: none; border: none; }
+    .lm-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 16px; border-top: 1px solid rgba(0,0,0,0.08);
+    }
+    .lm-secure { display: flex; align-items: center; gap: 8px; }
+    .lm-secure img { width: 24px; height: 24px; }
+    .lm-secure-text { font-size: 16px; font-weight: 600; color: rgba(0,0,0,0.6); }
+    .lm-support { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+    .lm-support-text { font-size: 16px; font-weight: 600; color: var(--orange); }
+    .lm-support img { width: 24px; height: 24px; }
+    /* Mobile: login modal takes more width */
+    @media (max-width: 480px) {
+      .modal-login { max-width: calc(100% - 16px); }
+      .lm-subtitle { font-size: 18px; }
+      .lm-secure-text, .lm-support-text { font-size: 14px; }
+    }
 
     /* ===== BONUS PAGE ===== */
     .bonus-hero {
@@ -780,24 +861,80 @@
 <!--  MODAL · LOGIN                                               -->
 <!-- =========================================================== -->
 <div id="modal-login" class="overlay" onclick="bgClose(event,'modal-login')">
-  <div class="modal">
-    <button class="modal-close" onclick="hideModal('modal-login')">×</button>
-    <div class="login-logo">
-      <img src="https://www.figma.com/api/mcp/asset/da0c4497-4bf7-4320-a20c-be9b768b3c80" alt="Betsson" style="filter:invert(1) sepia(1) saturate(3) hue-rotate(-10deg) brightness(0.7);">
+  <div class="modal modal-login">
+
+    <!-- Header -->
+    <div class="lm-header">
+      <span class="lm-title">Log in</span>
+      <button class="lm-close" onclick="hideModal('modal-login')" aria-label="Close">
+        <img src="https://www.figma.com/api/mcp/asset/b248f14e-2f18-4eff-a258-4bc6140b066c" alt="Close">
+      </button>
     </div>
-    <div class="modal-title" style="text-align:center;">Welcome back</div>
-    <div class="form-group">
-      <label class="form-label" for="inp-email">Username / Email</label>
-      <input class="form-input" id="inp-email" type="email" placeholder="your@email.com" autocomplete="email">
+
+    <!-- Body -->
+    <div class="lm-body">
+      <div class="lm-section">
+        <!-- Subtitle -->
+        <div class="lm-subtitle">Sign in to your account</div>
+
+        <!-- Passkey button -->
+        <button class="lm-passkey-btn" type="button">
+          <img src="https://www.figma.com/api/mcp/asset/28025017-7477-418a-81c1-68f6d2382c53" alt="Passkey">
+          Sign in with passkey
+        </button>
+
+        <!-- OR divider -->
+        <div class="lm-or">
+          <div class="lm-or-line"></div>
+          <span>or</span>
+          <div class="lm-or-line"></div>
+        </div>
+
+        <!-- Inputs -->
+        <div class="lm-inputs">
+          <div class="lm-input-wrap">
+            <input class="lm-input" id="inp-email" type="email"
+              placeholder="Username / email *" autocomplete="email">
+          </div>
+          <div class="lm-input-wrap">
+            <input class="lm-input" id="inp-pass" type="password"
+              placeholder="Password *" autocomplete="current-password">
+            <img class="lm-input-icon" src="https://www.figma.com/api/mcp/asset/f137e79c-57f8-4746-a0b1-2bcd8c7c7946" alt="Show password" onclick="togglePassword()">
+          </div>
+        </div>
+
+        <!-- Remember me + Forgot password -->
+        <div class="lm-remember-row">
+          <label class="lm-checkbox-row">
+            <div class="lm-checkbox" id="rememberCheck" onclick="toggleRemember(this)"></div>
+            <span class="lm-checkbox-label">Remember me</span>
+          </label>
+          <button class="lm-forgot" type="button">Forgot password?</button>
+        </div>
+      </div>
+
+      <!-- Log in button -->
+      <button class="lm-login-btn" onclick="doLogin()">Log in</button>
+
+      <!-- Create account -->
+      <div class="lm-create-section">
+        <span class="lm-create-label">Don't have an account ?</span>
+        <button class="lm-create-link" type="button">Create Account</button>
+      </div>
     </div>
-    <div class="form-group">
-      <label class="form-label" for="inp-pass">Password</label>
-      <input class="form-input" id="inp-pass" type="password" placeholder="••••••••" autocomplete="current-password">
+
+    <!-- Footer -->
+    <div class="lm-footer">
+      <div class="lm-secure">
+        <img src="https://www.figma.com/api/mcp/asset/4dc419a0-1ed4-4cde-b1bb-b2bff63cb508" alt="Secure">
+        <span class="lm-secure-text">100% secure</span>
+      </div>
+      <div class="lm-support">
+        <span class="lm-support-text">Customer support</span>
+        <img src="https://www.figma.com/api/mcp/asset/95402ef8-a7be-4e99-a23a-5624f2dfb13d" alt="Support">
+      </div>
     </div>
-    <button class="btn-orange btn-block" onclick="doLogin()">Login</button>
-    <p style="text-align:center;margin-top:14px;font-size:13px;color:var(--text-secondary);">
-      No account? <span style="color:var(--orange);font-weight:600;cursor:pointer;">Create Account</span>
-    </p>
+
   </div>
 </div>
 
@@ -915,6 +1052,16 @@ function bgClose(e, id) { if (e.target === e.currentTarget) hideModal(id); }
 function doLogin() {
   hideModal('modal-login');
   showPage('pg-bonus');
+}
+function togglePassword() {
+  const inp = document.getElementById('inp-pass');
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+}
+function toggleRemember(el) {
+  el.classList.toggle('checked');
+  el.style.background = el.classList.contains('checked') ? 'var(--orange)' : 'white';
+  el.style.borderColor = el.classList.contains('checked') ? 'var(--orange)' : 'rgba(0,0,0,0.38)';
+  el.innerHTML = el.classList.contains('checked') ? '<svg width="12" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5L4.5 8.5L11 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>' : '';
 }
 
 /* ── Deposit ── */
